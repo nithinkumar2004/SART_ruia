@@ -1,0 +1,23 @@
+{
+  "name": "Sarotoria — Consumer AI Fashion Universe",
+  "short_name": "Sarotoria",
+  "description": "Premium virtual fashion digital wardrobe, Gemini fitting advisor, and interactive size recommender platform.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0B1020",
+  "theme_color": "#00D4FF",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/static/images/logo_pwa_192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/static/images/logo_pwa_512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "categories": ["shopping", "lifestyle", "utilities"]
+}

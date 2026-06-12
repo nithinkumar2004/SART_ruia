@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: sartoria-nexus
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn run:app
+    envVars:
+      - key: SUPABASE_URL
+        sync: false
+        placeholder: "Enter your Supabase URL (e.g. https://xxxx.supabase.co)"
+      - key: SUPABASE_KEY
+        sync: false
+        placeholder: "Enter your Supabase Key (e.g. sb_publishable_xxxx)"
+      - key: SECRET_KEY
+        generateValue: true

@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Sartoria Nexus — Advanced Analytics{% endblock %}
+
+{% block content %}
+<div class="animate-fade">
+    <!-- Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <div>
+            <h1 style="font-size: 2.2rem; margin-bottom: 4px;">Traffic Deep Dive</h1>
+            <p style="font-size: 0.85rem; color: var(--text-secondary);">Comprehensive scanning metrics and demographic logging</p>
+        </div>
+        <a href="/dashboard" class="btn btn-secondary">
+            <i class="fa-solid fa-arrow-left"></i> Back to Workspace
+        </a>
+    </div>
+
+    <!-- Advanced Charts Section -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 30px;">
+        <!-- Chart 1: Countries -->
+        <div class="glass-card" style="margin-bottom: 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="font-size: 1.15rem;"><i class="fa-solid fa-globe" style="color: var(--neon-pink); margin-right: 8px;"></i> Geographic Scan Hits</h3>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">Top Scanning Locations</span>
+            </div>
+            <div style="position: relative; height: 260px; width: 100%;">
+                <canvas id="chart-countries" data-chart='{{ stats.scans_by_country | tojson }}'></canvas>
+            </div>
+        </div>
+        
+        <!-- Chart 2: Devices Summary -->
+        <div class="glass-card" style="margin-bottom: 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="font-size: 1.15rem;"><i class="fa-solid fa-mobile-screen" style="color: var(--royal-purple); margin-right: 8px;"></i> Devices Summary</h3>
+            </div>
+            <div style="position: relative; height: 260px; width: 100%;">
+                <canvas id="chart-devices" data-chart='{{ stats.scans_by_device | tojson }}'></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Full Audit Table Logs -->
+    <div class="glass-card" style="margin-bottom: 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+            <h3 style="font-size: 1.15rem;"><i class="fa-solid fa-list-check" style="color: var(--tech-indigo); margin-right: 8px;"></i> Scan Audit Log Streams</h3>
+            <span style="font-size: 0.8rem; background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border-glass);">
+                Total Hits: <strong>{{ stats.total_scans }}</strong>
+            </span>
+        </div>
+        
+        <div style="overflow-x: auto; width: 100%;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
+                <thead>
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--text-secondary); font-family: var(--font-heading); text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em;">
+                        <th style="padding: 12px 16px;">Garment Name</th>
+                        <th style="padding: 12px 16px;">Scan Timestamp</th>
+                        <th style="padding: 12px 16px;">Location</th>
+                        <th style="padding: 12px 16px;">IP Address</th>
+                        <th style="padding: 12px 16px;">Device Profile</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if stats.scan_history %}
+                        {% for scan in stats.scan_history %}
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.04); transition: var(--transition-smooth);" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
+                                <td style="padding: 14px 16px; font-weight: 500; color: #ffffff;">{{ scan.garment_name }}</td>
+                                <td style="padding: 14px 16px; color: var(--text-secondary);">{{ scan.scanned_at }}</td>
+                                <td style="padding: 14px 16px; color: var(--text-secondary);"><i class="fa-solid fa-location-dot" style="color: var(--neon-pink); margin-right: 6px;"></i> {{ scan.country }}</td>
+                                <td style="padding: 14px 16px; font-family: monospace; color: var(--text-muted);">{{ scan.ip_address }}</td>
+                                <td style="padding: 14px 16px;">
+                                    <span class="feed-badge feed-badge-{{ scan.device_type.lower() }}" style="font-size: 0.7rem; padding: 3px 8px;">
+                                        {{ scan.device_type }}
+                                    </span>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: 40px 0; color: var(--text-muted);">
+                                <i class="fa-solid fa-inbox" style="font-size: 2rem; margin-bottom: 12px; display: block;"></i>
+                                No scans logged across your boutique tags yet.
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,27 @@
+# Credentials & environment files
+.env
+env.txt
+
+# Local Databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Python bytecode and caches
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# IDE and OS files
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
+
+# Temporary uploads/static
+app/static/qr/qr_*.png
+app/static/uploads/logos/logo_*.png
+app/static/uploads/processed_*.png
+app/static/uploads/temp/*

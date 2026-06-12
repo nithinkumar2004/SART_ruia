@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Sartoria Nexus — Register New Garment{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: center; padding: 20px 0;">
+    <div class="glass-card animate-fade" style="width: 100%; max-width: 600px; margin-bottom: 0;">
+        
+        <div style="text-align: center; margin-bottom: 30px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 20px;">
+            <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2.8rem; color: var(--neon-pink); margin-bottom: 12px;"></i>
+            <h2 style="font-size: 1.8rem; margin-bottom: 6px;">Register New Garment</h2>
+            <p style="font-size: 0.85rem; color: var(--text-secondary);">Upload garment image to initiate background isolation & QR rendering</p>
+        </div>
+        
+        <form id="upload-garment-form" action="/upload-garment" method="POST" enctype="multipart/form-data">
+            
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label for="garment_name" class="form-label">Garment Name *</label>
+                <input type="text" id="garment_name" name="garment_name" class="form-input" placeholder="Aero Tech Oversized Tee" required autocomplete="off">
+            </div>
+            
+            <div class="form-group" style="margin-bottom: 25px;">
+                <label for="category" class="form-label">Product Category *</label>
+                <select id="category" name="category" class="form-input form-select" required>
+                    <option value="" disabled selected>Select Garment Category</option>
+                    <option value="Shirts">Shirts</option>
+                    <option value="T-Shirts">T-Shirts</option>
+                    <option value="Jeans">Jeans</option>
+                    <option value="Sarees">Sarees</option>
+                    <option value="Dresses">Dresses</option>
+                    <option value="Hoodies">Hoodies</option>
+                    <option value="Blazers">Blazers</option>
+                    <option value="Ethnic Wear">Ethnic Wear</option>
+                    <option value="Kids Wear">Kids Wear</option>
+                    <option value="Shoes">Shoes</option>
+                    <option value="Accessories">Accessories</option>
+                </select>
+            </div>
+            
+            <div class="form-group" style="margin-bottom: 30px;">
+                <label class="form-label">Garment Photographic Asset *</label>
+                
+                <div class="upload-dragzone" id="upload-dragzone">
+                    <i class="fa-solid fa-shirt upload-icon"></i>
+                    <div id="dragzone-prompt">
+                        <p style="font-weight: 500; font-size: 0.95rem;">Drag and drop garment image here</p>
+                        <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">PNG, JPG, WEBP formats allowed (Max 8MB)</p>
+                    </div>
+                    
+                    <div class="file-preview-container" id="file-preview-container">
+                        <img id="file-preview" class="file-preview" src="#" alt="Garment Preview">
+                    </div>
+                </div>
+                
+                <input type="file" id="garment_image" name="garment_image" style="display: none;" accept="image/png, image/jpeg, image/jpg, image/webp" required>
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-glow" style="width: 100%; padding: 14px; font-size: 1.05rem;">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Process Asset & Render QR Code
+            </button>
+            
+        </form>
+    </div>
+</div>
+
+<!-- Holographic Simulated AI Loader Overlay -->
+<div class="ai-loader-overlay" id="ai-loader-overlay">
+    <div class="ai-spinner"></div>
+    <div class="ai-loader-text">
+        SARTORIA CORE AI PIPELINE <br>
+        <span style="color: var(--neon-pink); font-size: 0.9rem; font-family: monospace; letter-spacing: 0.05em;">PROCESSING GARMENT SILHOUETTE...</span>
+    </div>
+    
+    <div class="ai-step-list">
+        <div class="ai-step-item">
+            <div class="dot"></div>
+            <span>Uploading photographic asset...</span>
+        </div>
+        <div class="ai-step-item">
+            <div class="dot"></div>
+            <span>Isolating fibers & removing backgrounds...</span>
+        </div>
+        <div class="ai-step-item">
+            <div class="dot"></div>
+            <span>Standardizing canvas dimensions...</span>
+        </div>
+        <div class="ai-step-item">
+            <div class="dot"></div>
+            <span>Synthesizing dominant color keys...</span>
+        </div>
+        <div class="ai-step-item">
+            <div class="dot"></div>
+            <span>Generating Sartoria branded QR...</span>
+        </div>
+    </div>
+</div>
+{% endblock %}

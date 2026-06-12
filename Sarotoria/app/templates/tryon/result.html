@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Sarotoria — AI Try-On Visual Scans{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 25px; display: flex; gap: 15px;">
+    <a href="/tryon?garment_id={{ garment.id }}" class="btn btn-secondary" style="padding: 8px 16px; font-size: 0.85rem;"><i class="fa-solid fa-rotate-left"></i> Run Fit Calibration Again</a>
+    <a href="/dashboard" class="btn btn-secondary" style="padding: 8px 16px; font-size: 0.85rem;"><i class="fa-solid fa-gauge"></i> Return to Dashboard</a>
+</div>
+
+<!-- Tryon Result Split view -->
+<div class="tryon-split">
+    
+    <!-- LEFT PANEL: Visual compositor result -->
+    <div style="display: flex; flex-direction: column; gap: 20px;">
+        <div class="glass-panel" style="padding: 15px; border-color: var(--secondary); background: #070B16; position: relative;">
+            
+            <!-- Dynamic scanning neon grid line overlay -->
+            <div style="position: absolute; top: 15px; left: 15px; width: calc(100% - 30px); height: calc(100% - 30px); border-radius: 18px; overflow: hidden; pointer-events: none; z-index: 10;">
+                <div class="scanner-line" style="animation-duration: 4s; box-shadow: 0 0 15px var(--primary);"></div>
+            </div>
+
+            <img src="{{ result.tryon_image_url }}" alt="AI virtual fitting scans result" style="width: 100%; border-radius: 18px; display: block; border: 1px solid rgba(0, 212, 255, 0.2); filter: drop-shadow(0 20px 40px rgba(0, 212, 255, 0.1));">
+        </div>
+    </div>
+
+    <!-- RIGHT PANEL: Action items -->
+    <div style="display: flex; flex-direction: column; gap: 20px;">
+        
+        <div class="glass-panel glow-secondary" style="border-color: var(--secondary);">
+            <div class="user-badge" style="width: max-content; background: rgba(255, 46, 190, 0.05); border-color: rgba(255, 46, 190, 0.2); color: var(--secondary); margin-bottom: 12px;">
+                <i class="fa-solid fa-circle-check"></i> FITTING COMPLETED SUCCESSFULLY
+            </div>
+            
+            <h2 style="font-size: 1.8rem; font-family: var(--font-heading); color: var(--text-main); margin-bottom: 10px;">Visual Scans Ready</h2>
+            <p style="font-size: 0.9rem; color: var(--text-sub); margin-bottom: 20px;">The digital garment texture has been dynamically merged and calibrated onto your torso segment coords. Review actions below:</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <!-- Save visual results to Wardrobes table -->
+                <form action="{{ url_for('garment.save_to_wardrobe') }}" method="POST">
+                    <input type="hidden" name="garment_id" value="{{ garment.id }}">
+                    <input type="hidden" name="folder_category" value="Casual">
+                    <button type="submit" class="btn btn-secondary" style="width: 100%; padding: 12px;"><i class="fa-solid fa-bookmark"></i> Save fitting to Wardrobe folder</button>
+                </form>
+
+                <!-- Download visual file -->
+                <a href="{{ result.tryon_image_url }}" download="Sartoria_AI_Tryon.png" class="btn btn-secondary" style="padding: 12px;"><i class="fa-solid fa-cloud-arrow-down"></i> Download fitted portrait (.png)</a>
+            </div>
+        </div>
+
+        <!-- Buy Now checkout card -->
+        <div class="glass-panel" style="border-color: var(--primary);">
+            <h3 style="font-family: var(--font-heading); color: var(--text-main); font-size: 1.2rem; margin-bottom: 12px;"><i class="fa-solid fa-cart-shopping" style="color: var(--primary); margin-right: 6px;"></i> Seamless Purchasing</h3>
+            <p style="font-size: 0.88rem; color: var(--text-sub); margin-bottom: 18px;">Love the fit? Seamlessly order the physical clothing item from the partnered boutique catalog.</p>
+            
+            <form action="{{ url_for('tryon.purchase') }}" method="POST">
+                <input type="hidden" name="garment_name" value="{{ garment.garment_name }}">
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-glass); padding: 15px 0; margin-bottom: 15px;">
+                    <span style="font-size: 0.95rem; color: var(--text-sub);">Catalog Listing:</span>
+                    <span style="font-size: 1.4rem; font-weight: 700; color: var(--primary); font-family: var(--font-heading);">Synced Specs</span>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-glow" style="width: 100%; padding: 14px; font-size: 1.05rem;"><i class="fa-solid fa-bag-shopping"></i> Purchase Look Now</button>
+            </form>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Sartoria Nexus — Garment Catalog{% endblock %}
+
+{% block content %}
+<div class="animate-fade">
+    <!-- Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <div>
+            <h1 style="font-size: 2.2rem; margin-bottom: 4px;">Garment Catalog</h1>
+            <p style="font-size: 0.85rem; color: var(--text-secondary);">Manage and monitor your digital apparel inventory nodes</p>
+        </div>
+        <a href="/upload-garment" class="btn btn-primary btn-glow">
+            <i class="fa-solid fa-cloud-arrow-up"></i> Upload New Garment
+        </a>
+    </div>
+
+    <!-- Inventory Gallery Grid -->
+    {% if garments %}
+        <div class="garments-list-grid">
+            {% for g in garments %}
+                <div class="garment-card">
+                    <div class="garment-img-wrapper">
+                        <!-- Serves the optimized transparent garment image -->
+                        <img src="{{ url_for('static', filename=g.image_url) }}" class="garment-card-img" alt="{{ g.garment_name }}">
+                    </div>
+                    
+                    <div class="garment-card-content">
+                        <div class="garment-card-category">{{ g.category }}</div>
+                        <h3 class="garment-card-title">{{ g.garment_name }}</h3>
+                        
+                        <div class="badge-row" style="margin-bottom: 15px;">
+                            <span class="tech-tag" style="padding: 4px 8px; font-size: 0.75rem;">
+                                <span class="color-dot" style="background: {{ g.pattern or '#ffffff' }}; width: 10px; height: 10px;"></span>
+                                {{ g.color or 'Unknown Color' }}
+                            </span>
+                            <span class="tech-tag" style="padding: 4px 8px; font-size: 0.75rem;">
+                                {{ g.style or 'Casual' }}
+                            </span>
+                        </div>
+                        
+                        <div class="garment-card-meta">
+                            <a href="/garment/{{ g.id }}" class="btn btn-secondary" style="flex: 1; padding: 8px; font-size: 0.8rem; border-radius: 8px;">
+                                <i class="fa-solid fa-gear"></i> Manage Tag
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div style="text-align: center; padding: 80px 20px; border: 2px dashed rgba(255, 255, 255, 0.08); border-radius: 24px; background: rgba(0, 0, 0, 0.15); max-width: 600px; margin: 40px auto 0 auto;">
+            <i class="fa-solid fa-shirt" style="font-size: 4rem; color: var(--text-muted); margin-bottom: 20px; display: block;"></i>
+            <h3 style="font-size: 1.5rem; margin-bottom: 10px;">Your Catalog is Empty</h3>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 25px; max-width: 400px; margin-left: auto; margin-right: auto;">
+                Bridge your first physical clothing asset into the virtual realm. Process images, isolate backgrounds, and generate smart QR tags.
+            </p>
+            <a href="/upload-garment" class="btn btn-primary btn-glow" style="padding: 12px 30px;">
+                <i class="fa-solid fa-cloud-arrow-up"></i> Upload First Garment
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

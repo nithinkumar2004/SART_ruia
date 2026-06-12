@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Sarotoria — {{ garment.garment_name }}{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 25px;">
+    <a href="/dashboard" class="btn btn-secondary" style="padding: 8px 16px; font-size: 0.85rem;"><i class="fa-solid fa-arrow-left-long"></i> Back to Dashboard</a>
+</div>
+
+<!-- Detailed Specifications Layout -->
+<div class="tryon-split">
+    
+    <!-- LEFT PANEL: Large Premium Image Preview -->
+    <div style="display: flex; flex-direction: column; gap: 20px;">
+        <div class="glass-panel" style="padding: 20px; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle, var(--bg-space) 0%, var(--bg-base) 100%);">
+            <img src="{{ garment.image_url }}" alt="{{ garment.garment_name }}" style="max-width: 90%; max-height: 90%; object-fit: contain; filter: drop-shadow(0 15px 30px rgba(0,0,0,0.06));">
+        </div>
+    </div>
+
+    <!-- RIGHT PANEL: Custom Specifications & Interactive Actions -->
+    <div style="display: flex; flex-direction: column; gap: 20px;">
+        
+        <div class="glass-panel" style="border-color: var(--primary);">
+            <span class="garment-brand">{{ garment.category }}</span>
+            <h2 style="font-size: 2rem; font-family: var(--font-heading); color: var(--text-main); margin-bottom: 15px;">{{ garment.garment_name }}</h2>
+            
+            <div class="spec-grid" style="margin-bottom: 20px;">
+                <div class="spec-box">
+                    <span class="spec-title">Color</span>
+                    <span class="spec-value">{{ garment.color or 'Standard' }}</span>
+                </div>
+                <div class="spec-box">
+                    <span class="spec-title">Style Theme</span>
+                    <span class="spec-value">{{ garment.style or 'Modern Fashion' }}</span>
+                </div>
+                <div class="spec-box">
+                    <span class="spec-title">Sleeves</span>
+                    <span class="spec-value">{{ garment.sleeve_type or 'Regular Fit' }}</span>
+                </div>
+                <div class="spec-box">
+                    <span class="spec-title">Pattern</span>
+                    <span class="spec-value">{{ garment.pattern or 'Solid' }}</span>
+                </div>
+            </div>
+            
+            <!-- Pulsing Try-On CTA Button -->
+            <a href="/tryon?garment_id={{ garment.id }}" class="btn btn-primary btn-glow" style="width: 100%; padding: 14px; font-size: 1rem;"><i class="fa-solid fa-shirt"></i> AI Virtual Fitting Try-On</a>
+        </div>
+
+        <!-- AI Sizing Analyzer panel -->
+        <div class="glass-panel" style="border-color: var(--accent);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h3 style="font-family: var(--font-heading); color: var(--text-main); font-size: 1.15rem;"><i class="fa-solid fa-ruler-combined" style="color: var(--accent); margin-right: 6px;"></i> AI Size Prediction</h3>
+                <span class="user-badge" style="background: rgba(255, 197, 71, 0.05); color: var(--text-main);">
+                    <i class="fa-solid fa-shield-halved" style="color: var(--accent);"></i> {{ size_suggestion.confidence }}% CONFIDENT
+                </span>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 15px;">
+                <div style="width: 70px; height: 70px; border-radius: 16px; background: linear-gradient(135deg, var(--accent), #e65100); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; font-weight: 700; color: #ffffff; font-family: var(--font-heading);">
+                    {{ size_suggestion.recommended_size }}
+                </div>
+                <div style="flex: 1;">
+                    <p style="font-size: 0.88rem; color: var(--text-sub); line-height: 1.4;">{{ size_suggestion.explanation }}</p>
+                </div>
+            </div>
+
+            {% if not profile %}
+                <a href="/profile" class="btn btn-secondary" style="width: 100%; font-size: 0.85rem;"><i class="fa-solid fa-user-plus"></i> Calibrate body metrics for high accuracy</a>
+            {% endif %}
+        </div>
+
+        <!-- Add to Smart Wardrobe Folder Card -->
+        <div class="glass-panel">
+            <h3 style="font-family: var(--font-heading); color: var(--text-main); font-size: 1.15rem; margin-bottom: 15px;"><i class="fa-solid fa-folder-plus" style="color: var(--primary); margin-right: 6px;"></i> Save to Smart Wardrobe</h3>
+            
+            <form action="{{ url_for('garment.save_to_wardrobe') }}" method="POST" style="display: flex; gap: 15px; align-items: flex-end;">
+                <input type="hidden" name="garment_id" value="{{ garment.id }}">
+                
+                <div class="form-group" style="flex: 2; margin-bottom: 0;">
+                    <label for="folder_category" class="form-label">Occasion Folder</label>
+                    <select id="folder_category" name="folder_category" class="form-input form-select" style="padding: 10px 14px;">
+                        <option value="Casual">Casual Collection</option>
+                        <option value="Office">Office Professional</option>
+                        <option value="Travel">Travel & Resort</option>
+                        <option value="Wedding">Wedding Festive</option>
+                        <option value="Party">Nightout Party</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn btn-secondary btn-glow" style="flex: 1.2; padding: 11px;"><i class="fa-solid fa-square-plus"></i> Save Look</button>
+            </form>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

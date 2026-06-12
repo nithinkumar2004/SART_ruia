@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block title %}Sartoria Nexus — Seller Dashboard{% endblock %}
+
+{% block content %}
+<div class="animate-fade">
+    <!-- Welcome Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <div>
+            <h1 style="font-size: 2.2rem; margin-bottom: 4px;">Boutique Control Hub</h1>
+            <p style="font-size: 0.85rem; color: var(--text-secondary);">Manage, track and optimize your garment digital footprints</p>
+        </div>
+        <a href="/upload-garment" class="btn btn-primary btn-glow">
+            <i class="fa-solid fa-plus"></i> Register New Garment
+        </a>
+    </div>
+
+    <!-- Core Metrics Stats Cards Grid -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-info">
+                <span class="stat-title">Total Inventory</span>
+                <span class="stat-value">{{ stats.total_garments }}</span>
+            </div>
+            <i class="fa-solid fa-shirt stat-icon"></i>
+        </div>
+        
+        <div class="stat-card" style="border-color: var(--border-neon-pink);">
+            <div class="stat-info">
+                <span class="stat-title">Total QR Scan Hits</span>
+                <span class="stat-value" style="color: var(--text-neon);">{{ stats.total_scans }}</span>
+            </div>
+            <i class="fa-solid fa-qrcode stat-icon" style="background: linear-gradient(135deg, var(--saturn-red), var(--neon-pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-info">
+                <span class="stat-title">Connected Nodes</span>
+                <span class="stat-value">1</span>
+            </div>
+            <i class="fa-solid fa-server stat-icon" style="background: linear-gradient(135deg, var(--tech-indigo), var(--royal-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+        </div>
+    </div>
+
+    <!-- Charts Sandbox -->
+    <div style="display: grid; grid-template-columns: 2fr 1.1fr; gap: 25px; margin-bottom: 30px;">
+        <div class="glass-card" style="margin-bottom: 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="font-size: 1.15rem;"><i class="fa-solid fa-timeline" style="color: var(--neon-pink); margin-right: 8px;"></i> Chronological Scan Analytics</h3>
+                <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Realtime gateway gateway scans</span>
+            </div>
+            <div style="position: relative; height: 260px; width: 100%;">
+                <!-- Data payload mapped directly to data-chart attribute -->
+                <canvas id="chart-daily-scans" data-chart='{{ stats.daily_scans | tojson }}'></canvas>
+            </div>
+        </div>
+        
+        <div class="glass-card" style="margin-bottom: 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="font-size: 1.15rem;"><i class="fa-solid fa-laptop-code" style="color: var(--royal-purple); margin-right: 8px;"></i> Devices Segmentation</h3>
+            </div>
+            <div style="position: relative; height: 260px; width: 100%;">
+                <canvas id="chart-devices" data-chart='{{ stats.scans_by_device | tojson }}'></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Layout Splits: Catalog vs Live Scan Feed -->
+    <div class="dashboard-layout">
+        <!-- Column 1: Catalog Preview -->
+        <div class="glass-card" style="margin-bottom: 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="font-size: 1.15rem;"><i class="fa-solid fa-bag-shopping" style="color: var(--tech-indigo); margin-right: 8px;"></i> Recent Garment Catalogs</h3>
+                <a href="/garments" style="font-size: 0.8rem; font-weight: 500;">Manage Full Catalog <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+            
+            {% if recent_garments %}
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px;">
+                    {% for g in recent_garments %}
+                        <div class="garment-card">
+                            <div class="garment-img-wrapper" style="aspect-ratio: 1.1;">
+                                <img src="{{ url_for('static', filename=g.image_url) }}" class="garment-card-img" alt="{{ g.garment_name }}">
+                            </div>
+                            <div class="garment-card-content" style="padding: 12px;">
+                                <div class="garment-card-category" style="font-size: 0.7rem; margin-bottom: 2px;">{{ g.category }}</div>
+                                <h4 class="garment-card-title" style="font-size: 0.9rem; margin-bottom: 6px;">{{ g.garment_name }}</h4>
+                                <a href="/garment/{{ g.id }}" class="btn btn-secondary" style="width: 100%; padding: 6px; font-size: 0.75rem; border-radius: 8px;">
+                                    <i class="fa-solid fa-gear"></i> Manage Tag
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div style="text-align: center; padding: 40px 0; border: 1px dashed rgba(255,255,255,0.08); border-radius: 12px; background: rgba(0,0,0,0.15);">
+                    <i class="fa-solid fa-shirt" style="font-size: 2.5rem; color: var(--text-muted); margin-bottom: 15px;"></i>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary);">No garments uploaded yet.</p>
+                    <a href="/upload-garment" class="btn btn-primary" style="margin-top: 15px; padding: 8px 16px; font-size: 0.85rem;"><i class="fa-solid fa-cloud-arrow-up"></i> Upload First Item</a>
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Column 2: Live Activity Feed -->
+        <div class="glass-card" style="margin-bottom: 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="font-size: 1.15rem;"><i class="fa-solid fa-tower-broadcast" style="color: #00ff66; margin-right: 8px;"></i> Live Scans Stream</h3>
+                <span class="indicator"></span>
+            </div>
+            
+            <div class="scan-feed">
+                {% if stats.scan_history %}
+                    {% for scan in stats.scan_history %}
+                        <div class="feed-item">
+                            <div class="feed-details">
+                                <span class="feed-item-title">{{ scan.garment_name }}</span>
+                                <div class="feed-meta">
+                                    <span><i class="fa-solid fa-location-dot" style="color: var(--neon-pink);"></i> {{ scan.country }}</span>
+                                    <span><i class="fa-solid fa-clock"></i> {{ scan.scanned_at.split(' ')[1] if ' ' in scan.scanned_at else scan.scanned_at.split('T')[1][:8] if 'T' in scan.scanned_at else 'Just now' }}</span>
+                                </div>
+                            </div>
+                            <span class="feed-badge feed-badge-{{ scan.device_type.lower() }}">
+                                {{ scan.device_type }}
+                            </span>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div style="text-align: center; padding: 30px 0; color: var(--text-muted); font-size: 0.85rem;">
+                        <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 1.5rem; margin-bottom: 10px; color: var(--neon-pink);"></i>
+                        <p>Waiting for dynamic QR scans...</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Sarotoria — Your AI Fashion Universe{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <div class="user-badge" style="margin-bottom: -10px;">
+        <span class="indicator"></span> ENTER THE FUTURISTIC RETAIL EXPERIENCE
+    </div>
+    <h1 class="hero-title">Your AI Fashion<br>Universe.</h1>
+    <p class="hero-subtitle">Wear confidence digitally. Scan physical garment tags in-store, trigger instant virtual try-ons, and consult your Gemini-powered personal stylist.</p>
+    
+    <div class="hero-cta">
+        {% if session.get('user_id') or session.get('profile') %}
+            <a href="/dashboard" class="btn btn-primary btn-glow"><i class="fa-solid fa-gauge"></i> Enter Dashboard</a>
+            <a href="/tryon" class="btn btn-secondary"><i class="fa-solid fa-shirt"></i> Try On Outfits</a>
+        {% else %}
+            <a href="/auth/signup" class="btn btn-primary btn-glow"><i class="fa-solid fa-rocket"></i> Get Started Free</a>
+            <a href="/auth/login" class="btn btn-secondary"><i class="fa-solid fa-right-to-bracket"></i> Login Portal</a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Key Features Visual Cards Row -->
+<div class="dashboard-grid" style="margin-top: 40px;">
+    <div class="glass-panel" style="text-align: center; display: flex; flex-direction: column; align-items: center; gap: 15px;">
+        <div style="background: rgba(0, 212, 255, 0.1); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+            <i class="fa-solid fa-qrcode" style="font-size: 1.8rem; color: var(--primary);"></i>
+        </div>
+        <h3 style="font-family: var(--font-heading); color: var(--text-main);">Instant QR Scans</h3>
+        <p style="font-size: 0.88rem; color: var(--text-sub);">Scan physical garments tags in retail stores. Immediately unpack brand descriptions, specs, and real-time reviews.</p>
+        <a href="/scan" class="btn btn-secondary" style="width: 100%; margin-top: 10px; font-size: 0.85rem;"><i class="fa-solid fa-qrcode"></i> Scan Tag</a>
+    </div>
+
+    <div class="glass-panel" style="text-align: center; display: flex; flex-direction: column; align-items: center; gap: 15px; border-color: var(--secondary);">
+        <div style="background: rgba(255, 46, 190, 0.1); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+            <i class="fa-solid fa-shirt" style="font-size: 1.8rem; color: var(--secondary);"></i>
+        </div>
+        <h3 style="font-family: var(--font-heading); color: var(--text-main);">AI Virtual Try-On</h3>
+        <p style="font-size: 0.88rem; color: var(--text-sub);">Upload a portrait or select custom model avatars. Composite the garment onto your build instantly using visual overlays.</p>
+        <a href="/tryon" class="btn btn-primary btn-glow" style="width: 100%; margin-top: 10px; font-size: 0.85rem;"><i class="fa-solid fa-shirt"></i> Try On Now</a>
+    </div>
+
+    <div class="glass-panel" style="text-align: center; display: flex; flex-direction: column; align-items: center; gap: 15px;">
+        <div style="background: rgba(255, 197, 71, 0.1); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+            <i class="fa-solid fa-wand-magic-sparkles" style="font-size: 1.8rem; color: var(--accent);"></i>
+        </div>
+        <h3 style="font-family: var(--font-heading); color: var(--text-main);">Gemini Advisor</h3>
+        <p style="font-size: 0.88rem; color: var(--text-sub);">An intelligent chat assistant. Connects weather, body measurements, and wardrobe folders to match clean outfit sets.</p>
+        <a href="/assistant" class="btn btn-secondary" style="width: 100%; margin-top: 10px; font-size: 0.85rem;"><i class="fa-solid fa-wand-magic-sparkles"></i> Open Stylist</a>
+    </div>
+</div>
+
+<!-- Omnichannel Concept Section -->
+<div class="glass-panel" style="margin-top: 30px; padding: 40px; border-radius: 28px; background: radial-gradient(circle at 10% 20%, rgba(0, 212, 255, 0.05) 0%, transparent 50%), var(--bg-card);">
+    <div class="layout-split" style="align-items: center;">
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div class="user-badge" style="width: max-content;">
+                <i class="fa-solid fa-link" style="color: var(--primary);"></i> HYBRID RETAIL CONCEPT
+            </div>
+            <h2 style="font-size: 2.2rem; line-height: 1.2; font-family: var(--font-heading); color: var(--text-main);">Bridging the Physical and Digital Fashion Worlds</h2>
+            <p style="color: var(--text-sub); font-size: 0.95rem;">Sarotoria interfaces with seller catalog networks dynamically. The QR code printed on the physical clothing item in a brick-and-mortar store serves as its unique digital passport. Sparing you from heavy local inventories, Sarotoria acts as your custom visual dressing room right in your pocket.</p>
+            <div style="display: flex; gap: 15px;">
+                <a href="/auth/signup" class="btn btn-primary btn-glow"><i class="fa-solid fa-user-plus"></i> Join the Universe</a>
+            </div>
+        </div>
+        <div style="display: flex; justify-content: center;">
+            <!-- Visual vector silhouette representation -->
+            <div style="width: 280px; height: 280px; border-radius: 24px; border: 1px dashed var(--primary); display: flex; align-items: center; justify-content: center; position: relative; background: var(--bg-space); box-shadow: var(--shadow-premium);">
+                <i class="fa-solid fa-mobile-screen" style="font-size: 6rem; color: var(--primary); position: relative; z-index: 2;"></i>
+                <i class="fa-solid fa-qrcode" style="font-size: 3rem; color: var(--secondary); position: absolute; top: 30px; right: 30px; z-index: 1;"></i>
+                <i class="fa-solid fa-shirt" style="font-size: 3.5rem; color: var(--accent); position: absolute; bottom: 35px; left: 35px; z-index: 1;"></i>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

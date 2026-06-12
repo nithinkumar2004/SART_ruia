@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}Sarotoria — Scanner & Redirection Hub{% endblock %}
+
+{% block content %}
+
+{% if mode == "manual_scan" %}
+<!-- MANUAL CAMERA SCANNER SIMULATION -->
+<div style="display: flex; justify-content: center; align-items: center; min-height: 70vh; padding: 20px 0;">
+    <div class="glass-panel glow-primary" style="width: 100%; max-width: 500px; padding: 40px; text-align: center; border-radius: 28px;">
+        <div class="user-badge" style="width: max-content; margin: 0 auto 15px auto;">
+            <span class="indicator"></span> SARTORIA AI SCANNER ACTIVE
+        </div>
+        <h2 style="font-family: var(--font-heading); color: var(--text-main); margin-bottom: 25px;">Garment QR Scanner</h2>
+        
+        <!-- Animated Scanner box -->
+        <div class="scanner-animation">
+            <div class="scanner-line"></div>
+            <i class="fa-solid fa-qrcode" style="font-size: 8rem; color: rgba(0, 212, 255, 0.1); position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i>
+        </div>
+
+        <p style="font-size: 0.88rem; color: var(--text-sub); margin-bottom: 25px;">Align the garment physical QR tag inside the camera boundary to sync digital specifications.</p>
+        
+        <!-- Simulated Scans quick select links list -->
+        <div style="text-align: left; border-top: 1px solid var(--border-glass); padding-top: 20px;">
+            <h4 style="font-size: 0.9rem; color: var(--text-main); font-family: var(--font-heading); margin-bottom: 15px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--primary);"></i> Simulate physical tag scan:</h4>
+            
+            <div style="display: flex; flex-direction: column; gap: 10px;" id="simulated-scans-list">
+                <!-- Javascript will load dynamic products here from global store -->
+                <p style="font-size: 0.8rem; color: var(--text-muted); text-align: center;">Loading catalog garments link tags...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        // Fetch all garments in the database from local API
+        fetch("/dashboard") // Simply hits and parses catalog garments
+            .then(() => {
+                // For simulator purposes, since we want mock scans, we list active shared catalog entries
+                const list = document.getElementById("simulated-scans-list");
+                list.innerHTML = "";
+                
+                // We'll hardcode typical simulated scan coordinates to make it easy
+                const sampleItems = [
+                    { id: "test-garment-1", name: "Cyberpunk Techwear Hooded Blazer", cat: "Blazers" },
+                    { id: "test-garment-2", name: "Premium Off-White Linen Shirt", cat: "Shirts" },
+                    { id: "test-garment-3", name: "Neon Pink Silk Floral Saree", cat: "Ethnic Wear" }
+                ];
+                
+                sampleItems.forEach(item => {
+                    const row = document.createElement("a");
+                    row.href = `/scan/${item.id}`;
+                    row.className = "feed-item";
+                    row.style.padding = "10px 14px";
+                    row.innerHTML = `
+                        <div class="feed-details">
+                            <span class="feed-item-title" style="font-size: 0.82rem; font-weight: 500;">${item.name}</span>
+                            <span class="feed-meta" style="font-size: 0.72rem;">Category: ${item.cat}</span>
+                        </div>
+                        <i class="fa-solid fa-circle-chevron-right" style="color: var(--primary);"></i>
+                    `;
+                    list.appendChild(row);
+                });
+            });
+    });
+</script>
+
+{% else %}
+<!-- QR TAG REDIRECTION AND PWA INSTALLATION INTERCEPT -->
+<div style="display: flex; justify-content: center; align-items: center; min-height: 70vh; padding: 20px 0;">
+    <div class="glass-panel glow-secondary" style="width: 100%; max-width: 500px; padding: 40px; border-radius: 28px; text-align: center;" id="install-card">
+        <div style="background: rgba(255, 46, 190, 0.1); width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto;">
+            <i class="fa-solid fa-mobile-screen" style="font-size: 2.2rem; color: var(--secondary);"></i>
+        </div>
+        
+        <h2 style="font-family: var(--font-heading); color: var(--text-main); font-size: 1.6rem; margin-bottom: 12px;">Install Sarotoria App</h2>
+        <p style="font-size: 0.9rem; color: var(--text-sub); margin-bottom: 25px;">To view the <strong>{{ garment.garment_name }}</strong> digital try-on, we highly recommend installing our Progressive Web App (PWA) for the complete fullscreen fashion universe experience!</p>
+        
+        <div class="glass-panel" style="text-align: left; padding: 20px; border-radius: 16px; margin-bottom: 25px; border-color: rgba(255, 46, 190, 0.15);">
+            <ul style="display: flex; flex-direction: column; gap: 10px; font-size: 0.82rem; color: var(--text-sub); list-style: none;">
+                <li><i class="fa-solid fa-circle-check" style="color: var(--secondary); margin-right: 8px;"></i> 1-Click Interactive virtual fittings</li>
+                <li><i class="fa-solid fa-circle-check" style="color: var(--secondary); margin-right: 8px;"></i> Dynamic measurements and fit analyzer</li>
+                <li><i class="fa-solid fa-circle-check" style="color: var(--secondary); margin-right: 8px;"></i> Access your wardrobe folders offline</li>
+            </ul>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+            <button id="pwa-scan-install" class="btn btn-primary btn-glow" style="width: 100%; padding: 14px;"><i class="fa-solid fa-download"></i> Install Standalone App</button>
+            <a href="/garment/{{ garment.id }}" class="btn btn-secondary" style="width: 100%; padding: 12px;"><i class="fa-solid fa-globe"></i> View specs in browser</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+        
+        // 1. Direct Redirection if already running inside Standalone PWA!
+        if (isStandalone) {
+            console.log("Sarotoria sw.js: Standalone PWA active. Redirecting straight to garment detail page.");
+            window.location.href = "/garment/{{ garment.id }}";
+            return;
+        }
+
+        // 2. Dynamic PWA installation trigger
+        const installBtn = document.getElementById("pwa-scan-install");
+        
+        installBtn.addEventListener("click", async () => {
+            if (deferredInstallPrompt) {
+                deferredInstallPrompt.prompt();
+                const { outcome } = await deferredInstallPrompt.userChoice;
+                console.log(`User installation choice outcome: ${outcome}`);
+                if (outcome === 'accepted') {
+                    // Redirect to specs details once installation finishes
+                    window.location.href = "/garment/{{ garment.id }}";
+                }
+            } else {
+                // If beforeinstallprompt hasn't fired yet, fallback to browser spec view immediately!
+                window.location.href = "/garment/{{ garment.id }}";
+            }
+        });
+    });
+</script>
+{% endif %}
+
+{% endblock %}

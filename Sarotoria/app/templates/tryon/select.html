@@ -1,0 +1,264 @@
+{% extends "base.html" %}
+
+{% block title %}Sarotoria — Virtual Try-On Workbench{% endblock %}
+
+{% block content %}
+
+{% if not garment %}
+<!-- CASE 1: GARMENT NOT CHOSEN - SELECT CATALOG LOOKS -->
+<div style="margin-bottom: 30px; display: flex; flex-direction: column; gap: 6px;">
+    <div class="user-badge" style="width: max-content;">
+        <span class="indicator"></span> AI DRESS SELECTION REQUIRED
+    </div>
+    <h2 style="font-size: 2.2rem; font-family: var(--font-heading); color: var(--text-main);">AI Try-On catalog</h2>
+    <p style="color: var(--text-sub); font-size: 0.95rem;">Select an outfit look from our partnered brands catalog to calibrate fitting scans.</p>
+</div>
+
+{% if catalog %}
+    <div class="garment-grid">
+        {% for item in catalog %}
+            <div class="garment-item">
+                <div class="garment-image-wrapper">
+                    <img src="{{ item.image_url }}" alt="{{ item.garment_name }}" class="garment-img">
+                </div>
+                <div class="garment-meta">
+                    <span class="garment-brand">{{ item.category }}</span>
+                    <h4 class="garment-name">{{ item.garment_name }}</h4>
+                    <a href="/tryon?garment_id={{ item.id }}" class="btn btn-primary btn-glow" style="width: 100%; margin-top: 10px; font-size: 0.85rem;"><i class="fa-solid fa-shirt"></i> Select to Try On</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="glass-panel" style="text-align: center; padding: 40px; border-style: dashed; border-color: var(--border-glass);">
+        <i class="fa-solid fa-triangle-exclamation" style="font-size: 2.5rem; color: var(--accent); margin-bottom: 10px;"></i>
+        <p style="font-size: 0.95rem; color: var(--text-sub);">No active garments available to try on. Check Nexus sync status.</p>
+    </div>
+{% endif %}
+
+{% else %}
+<!-- CASE 2: WORKBENCH ACTIVE - SELECT PHOTO OR MODEL -->
+<div style="margin-bottom: 30px; display: flex; flex-direction: column; gap: 6px;">
+    <a href="/garment/{{ garment.id }}" class="btn btn-secondary" style="padding: 8px 16px; font-size: 0.85rem; width: max-content; margin-bottom: 10px;"><i class="fa-solid fa-arrow-left-long"></i> Back to Garment Specs</a>
+    <h2 style="font-size: 2.2rem; font-family: var(--font-heading); color: var(--text-main);">AI Fitting Workbench</h2>
+    <p style="color: var(--text-sub); font-size: 0.95rem;">Composite <strong>{{ garment.garment_name }}</strong> onto a pre-made model avatar or upload your portrait portrait.</p>
+</div>
+
+<form action="{{ url_for('tryon.run_tryon') }}" method="POST" enctype="multipart/form-data">
+    <input type="hidden" name="garment_id" value="{{ garment.id }}">
+    
+    <div class="tryon-split">
+        
+        <!-- LEFT PANEL: Selected Garment Specs card -->
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div class="glass-panel" style="padding: 20px; text-align: center;">
+                <h4 style="font-family: var(--font-heading); color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; margin-bottom: 15px;">FITTING SELECTION</h4>
+                <img src="{{ garment.image_url }}" alt="{{ garment.garment_name }}" style="max-width: 80%; max-height: 250px; object-fit: contain; margin-bottom: 15px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.04));">
+                <span class="garment-brand" style="font-size: 0.75rem;">{{ garment.category }}</span>
+                <h3 style="font-size: 1.3rem; font-family: var(--font-heading); color: var(--text-main); margin-bottom: 10px;">{{ garment.garment_name }}</h3>
+                
+                <div class="spec-grid" style="text-align: left; font-size: 0.82rem; margin-top: 15px;">
+                    <div class="spec-box" style="padding: 8px 12px;">
+                        <span class="spec-title" style="font-size: 0.65rem;">Style</span>
+                        <span class="spec-value" style="font-size: 0.82rem;">{{ garment.style or 'Modern' }}</span>
+                    </div>
+                    <div class="spec-box" style="padding: 8px 12px;">
+                        <span class="spec-title" style="font-size: 0.65rem;">Pattern</span>
+                        <span class="spec-value" style="font-size: 0.82rem;">{{ garment.pattern or 'Solid' }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT PANEL: Avatar selector or Selfie uploader forms -->
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+            
+            <!-- Model Avatars Selection Grid -->
+            <div class="glass-panel" style="border-color: var(--primary);">
+                <h3 style="font-family: var(--font-heading); color: var(--text-main); font-size: 1.15rem; margin-bottom: 15px;"><i class="fa-solid fa-person-circle-check" style="color: var(--primary); margin-right: 6px;"></i> Choice A: Curated Model Avatar</h3>
+                
+                <div class="avatar-selection-grid">
+                    {% for avatar in avatars %}
+                        <div class="avatar-card {% if loop.first %}selected{% endif %}" data-avatar-id="{{ avatar.id }}">
+                            <!-- Display the actual curated model avatar image -->
+                            {% if avatar.avatar_url %}
+                                <img src="{{ avatar.avatar_url }}" alt="{{ avatar.label }}" class="avatar-img">
+                            {% else %}
+                                <div style="width: 100%; height: 100%; background: radial-gradient(circle, var(--bg-space) 0%, var(--bg-base) 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 10px; text-align: center;">
+                                    <i class="fa-solid fa-user-tie" style="font-size: 2.2rem; color: var(--text-muted);"></i>
+                                </div>
+                            {% endif %}
+                            
+                            <!-- Premium text overlay label with soft dark glass backdrop -->
+                            <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.4) 75%, transparent 100%); padding: 8px 6px; text-align: center; border-bottom-left-radius: 14px; border-bottom-right-radius: 14px; backdrop-filter: blur(2px);">
+                                <span style="font-size: 0.68rem; color: #ffffff; font-weight: 600; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--font-body);">
+                                    {{ avatar.label }}
+                                </span>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                <input type="hidden" name="avatar_id" id="avatar_id_input" value="model_female_1">
+            </div>
+
+            <!-- Selfie Portrait Uploader -->
+            <div class="glass-panel" style="border-color: var(--secondary);">
+                <h3 style="font-family: var(--font-heading); color: var(--text-main); font-size: 1.15rem; margin-bottom: 15px;"><i class="fa-solid fa-cloud-arrow-up" style="color: var(--secondary); margin-right: 6px;"></i> Choice B: Upload Your Own Portrait</h3>
+                
+                <div class="drag-zone" id="portrait-drag-zone">
+                    <i class="fa-solid fa-camera-retro" style="font-size: 2.5rem; color: var(--secondary); margin-bottom: 12px; animation: bounce 2s infinite;"></i>
+                    <p id="drag-zone-text" style="font-size: 0.85rem; color: var(--text-sub); font-weight: 500;">Drag and drop front-facing portrait or click to browse</p>
+                    <input type="file" name="user_portrait" id="file-upload-input" style="display: none;" accept="image/*">
+                </div>
+                
+                <!-- Upload preview placeholder -->
+                <div id="preview-box" style="display: none; margin-top: 15px; text-align: center; border: 1px solid var(--border-glass); border-radius: 14px; padding: 10px; background: var(--bg-space);">
+                    <span style="font-size: 0.75rem; color: var(--secondary); font-weight: 600; display: block; margin-bottom: 8px;"><i class="fa-solid fa-circle-check"></i> Photo Selected (Choice B Active)</span>
+                    <img id="upload-preview" src="#" alt="User Upload Preview" style="max-height: 150px; max-width: 100%; border-radius: 8px; object-fit: contain;">
+                </div>
+            </div>
+
+            <!-- Run compositor submit button -->
+            <button type="submit" class="btn btn-primary btn-glow" style="width: 100%; padding: 16px; font-size: 1.1rem;"><i class="fa-solid fa-wand-magic-sparkles"></i> Execute AI Visual Try-On</button>
+
+        </div>
+
+    </div>
+</form>
+
+<!-- Load Puter.js for free, keyless AI Image Generation -->
+<script src="https://js.puter.com/v2/"></script>
+
+<!-- Holographic Try-On Processing Overlay -->
+<div id="loading-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 16, 32, 0.96); z-index: 10000; flex-direction: column; align-items: center; justify-content: center; gap: 20px;">
+    <div class="spinner-box" style="position: relative; width: 120px; height: 120px; border-radius: 50%; border: 3px solid rgba(0, 212, 255, 0.1); display: flex; align-items: center; justify-content: center; animation: pulse 2s infinite;">
+        <i class="fa-solid fa-wand-magic-sparkles" style="font-size: 3rem; color: var(--primary); animation: spin 4s infinite linear;"></i>
+        <span class="scan-bar" style="position: absolute; width: 100%; height: 3px; background: var(--accent); top: 50%; box-shadow: 0 0 10px var(--accent); animation: scan-anim 2.5s infinite ease-in-out;"></span>
+    </div>
+    <h3 id="loading-title" style="font-family: var(--font-heading); color: var(--text-main); font-size: 1.4rem; letter-spacing: 2px; text-transform: uppercase; margin-top: 10px;">INITIALIZING TRY-ON NODE</h3>
+    <p id="loading-text" style="color: var(--text-sub); font-size: 0.85rem; font-family: monospace;">SYS ACTIVE: CONNECTING TO PUTER AI CLUSTER...</p>
+</div>
+
+<style>
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @keyframes scan-anim { 0% { top: 10%; } 50% { top: 90%; } 100% { top: 10%; } }
+    @keyframes pulse { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.4); } 70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(0, 212, 255, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 212, 255, 0); } }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        // Toggle selected model avatar card
+        const cards = document.querySelectorAll(".avatar-card");
+        const hiddenInput = document.getElementById("avatar_id_input");
+        const previewBox = document.getElementById("preview-box");
+        
+        cards.forEach(card => {
+            card.addEventListener("click", () => {
+                cards.forEach(c => c.classList.remove("selected"));
+                card.classList.add("selected");
+                
+                const id = card.getAttribute("data-avatar-id");
+                hiddenInput.value = id;
+                
+                const fileInput = document.getElementById("file-upload-input");
+                if (fileInput) fileInput.value = "";
+                if (previewBox) previewBox.style.display = "none";
+                const dragText = document.getElementById("drag-zone-text");
+                if (dragText) dragText.innerText = "Drag and drop front-facing portrait or click to browse";
+            });
+        });
+
+        // Upgraded Form submit handler incorporating Puter.js
+        const form = document.querySelector("form");
+        const fileInput = document.getElementById("file-upload-input");
+        const loadingOverlay = document.getElementById("loading-overlay");
+        const loadingTitle = document.getElementById("loading-title");
+        const loadingText = document.getElementById("loading-text");
+
+        form.addEventListener("submit", (e) => {
+            const hasUploadedFile = fileInput && fileInput.files && fileInput.files.length > 0;
+
+            if (!hasUploadedFile) {
+                // Choice A (Avatar Mode): Generate full photorealistic fitting using Puter.js image generation!
+                e.preventDefault();
+                
+                // Show loader
+                loadingOverlay.style.display = "flex";
+                loadingTitle.innerText = "GENERATING STYLING GRAPHICS";
+                loadingText.innerText = "PUTER AI: CALLING FREE GEMINI/DALL-E 3 GENERATOR...";
+
+                // Get details
+                const garmentName = "{{ garment.garment_name }}";
+                const category = "{{ garment.category }}";
+                const color = "{{ garment.color or 'standard' }}";
+                const style = "{{ garment.style or 'modern' }}";
+                const pattern = "{{ garment.pattern or 'solid' }}";
+                const avatarId = hiddenInput.value;
+
+                const modelGender = avatarId.includes("female") ? "female" : "male";
+                const modelDesc = modelGender === "female" ? "a beautiful professional female fashion model" : "a handsome professional male fashion model";
+
+                // Build detailed catalog fashion prompt
+                const prompt = `A professional high-fashion studio catalog photograph of ${modelDesc} wearing a ${garmentName}. The garment is a ${category} in ${color} color, styled in ${style} theme with ${pattern} pattern. The fabric texture is highly detailed, showing natural physical folds, creases, and realistic soft shadows conforming to the body. Clean studio background, exquisite soft lighting, 8k resolution, professional styling, highly detailed.`;
+
+                // Call Puter.js Text-to-Image API using dall-e-3 / gemini-3.1-flash-image-preview
+                puter.ai.txt2img(prompt, { model: "dall-e-3", quality: "standard" })
+                    .then(imgElement => {
+                        loadingTitle.innerText = "CALIBRATING FITTING SCANS";
+                        loadingText.innerText = "SYS SECURE: EXTRACTING DIGITAL FIT...";
+
+                        // Convert HTMLImageElement to Base64 via Canvas
+                        const canvas = document.createElement("canvas");
+                        canvas.width = imgElement.naturalWidth || imgElement.width || 600;
+                        canvas.height = imgElement.naturalHeight || imgElement.height || 800;
+
+                        const ctx = canvas.getContext("2d");
+                        ctx.drawImage(imgElement, 0, 0, canvas.width, canvas.height);
+                        const base64Data = canvas.toDataURL("image/png");
+
+                        loadingTitle.innerText = "SAVING FIT SCAN";
+                        loadingText.innerText = "SYS SECURE: ARCHIVING TRY-ON SCAN...";
+
+                        // Submit base64 to backend
+                        return fetch("/tryon/save-puter-result", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({
+                                garment_id: "{{ garment.id }}",
+                                garment_name: garmentName,
+                                category: category,
+                                style: style,
+                                image_base64: base64Data
+                            })
+                        });
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            window.location.href = data.redirect_url;
+                        } else {
+                            alert("AI Image generation failed: " + data.error);
+                            loadingOverlay.style.display = "none";
+                        }
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        alert("Puter AI generation failed: " + err.message + ". Falling back to 3D composite engine.");
+                        // Submit form normally as fallback
+                        form.submit();
+                    });
+            } else {
+                // Choice B (Selfie Mode): Process through local 3D crease-mapping engine
+                loadingOverlay.style.display = "flex";
+                loadingTitle.innerText = "ANALYZING TORSO GEOMETRY";
+                loadingText.innerText = "PILLOW CORE: CREATING CREASE MAP AND DROP SHADOW...";
+            }
+        });
+    });
+</script>
+{% endif %}
+
+{% endblock %}

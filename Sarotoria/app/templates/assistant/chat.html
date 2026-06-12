@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+
+{% block title %}Sarotoria — AI Fashion Assistant{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center;">
+    <div style="display: flex; flex-direction: column; gap: 6px;">
+        <div class="user-badge" style="width: max-content;">
+            <span class="indicator"></span> GEMINI-1.5-FLASH ACTIVE
+        </div>
+        <h2 style="font-size: 2.2rem; font-family: var(--font-heading); color: var(--text-main);">AI Fashion Advisor</h2>
+    </div>
+    <button id="clear-chat-btn" class="btn btn-secondary" style="padding: 8px 16px; font-size: 0.85rem;"><i class="fa-solid fa-trash-can"></i> Clear Session</button>
+</div>
+
+<!-- Chat interactive split panel -->
+<div class="layout-split">
+    
+    <!-- LEFT PANEL: Active Chat Window -->
+    <div class="chat-window">
+        <div class="chat-messages" id="chat-scroller">
+            {% for chat in history %}
+                <div class="chat-bubble {% if chat.is_user %}chat-bubble-user{% else %}chat-bubble-bot{% endif %}">
+                    {{ chat.text | safe }}
+                </div>
+            {% endfor %}
+            
+            <!-- Dynamic AI Thinking indicator -->
+            <div class="chat-bubble chat-bubble-bot" id="thinking-indicator" style="display: none; padding: 10px 18px; border-color: var(--primary);">
+                <span style="color: var(--primary);"><i class="fa-solid fa-spinner fa-spin" style="margin-right: 8px;"></i> Sartoria AI calibrating styling match...</span>
+            </div>
+        </div>
+        
+        <div class="chat-input-bar">
+            <input type="text" id="chat-user-input" class="form-input" style="padding: 12px 18px; border-radius: 14px;" placeholder="e.g. Need outfit suggestion for professional office meeting..." aria-label="Stylist message">
+            <button id="chat-send-btn" class="btn btn-primary btn-glow" style="padding: 12px 20px;"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <!-- RIGHT PANEL: Gemini Live Sizing & Styling Recommendation Box -->
+    <div style="display: flex; flex-direction: column; gap: 20px;">
+        
+        <!-- Live Styling Specs container -->
+        <div class="glass-panel glow-primary" id="advisor-rec-box" style="border-color: var(--accent); display: none;">
+            <div class="user-badge" style="width: max-content; background: rgba(255, 197, 71, 0.05); color: var(--text-main); margin-bottom: 12px; border-color: rgba(255, 197, 71, 0.2);">
+                <i class="fa-solid fa-wand-magic-sparkles" style="color: var(--accent);"></i> DRESS SELECTOR RECOMMENDATION
+            </div>
+            
+            <h3 style="font-family: var(--font-heading); color: var(--text-main); font-size: 1.25rem; margin-bottom: 10px;" id="rec-title">Occasion Selection</h3>
+            
+            <p style="font-size: 0.9rem; color: var(--text-main); font-weight: 500; line-height: 1.4; margin-bottom: 15px;" id="rec-outfit">Recommended Outfit details will compile here dynamically.</p>
+            
+            <!-- Matching Colors Badges Row -->
+            <div style="margin-bottom: 18px;">
+                <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; display: block; margin-bottom: 8px;">Color Harmony Match</span>
+                <div style="display: flex; flex-wrap: wrap; gap: 8px;" id="rec-colors">
+                    <!-- Matching colors inject here -->
+                </div>
+            </div>
+
+            <!-- Actionable Stylist Tips -->
+            <div style="margin-bottom: 18px;">
+                <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; display: block; margin-bottom: 8px;">Calibrated Styling Tips</span>
+                <ul style="padding-left: 18px; font-size: 0.82rem; color: var(--text-sub); display: flex; flex-direction: column; gap: 8px;" id="rec-tips">
+                    <!-- Tips list injects here -->
+                </ul>
+            </div>
+
+            <!-- Alternatives -->
+            <div style="border-top: 1px solid var(--border-glass); padding-top: 15px; font-size: 0.82rem;">
+                <span style="color: var(--text-muted); display: block; font-weight: 600; margin-bottom: 4px;">Alternative Look:</span>
+                <p style="color: var(--text-sub);" id="rec-alternative">Knitted shirt option.</p>
+            </div>
+        </div>
+
+        <!-- Initial static advisor guidance when no recommendation generated yet -->
+        <div class="glass-panel" id="advisor-guidance-box" style="border-color: var(--border-glass);">
+            <h3 style="font-family: var(--font-heading); color: var(--text-main); font-size: 1.15rem; margin-bottom: 10px;"><i class="fa-solid fa-circle-question" style="color: var(--primary); margin-right: 6px;"></i> Styling Prompts</h3>
+            <p style="font-size: 0.85rem; color: var(--text-sub); line-height: 1.4; margin-bottom: 15px;">Mention specific occasion keywords in your styling chat to trigger our **AI Dress Selector** recommendation cards instantly!</p>
+            <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.8rem;">
+                <div class="feed-item" style="padding: 8px 12px; cursor: pointer;" onclick="quickPrompt('I need a style recommendation for a business meeting tomorrow')">
+                    <span>"Outfit for business meeting"</span>
+                    <i class="fa-solid fa-circle-chevron-right" style="color: var(--primary);"></i>
+                </div>
+                <div class="feed-item" style="padding: 8px 12px; cursor: pointer;" onclick="quickPrompt('What should I wear to a winter wedding next week?')">
+                    <span>"What to wear to a wedding"</span>
+                    <i class="fa-solid fa-circle-chevron-right" style="color: var(--primary);"></i>
+                </div>
+                <div class="feed-item" style="padding: 8px 12px; cursor: pointer;" onclick="quickPrompt('Suggest travel outfit looks for a beach vacation')">
+                    <span>"Beach vacation travel look"</span>
+                    <i class="fa-solid fa-circle-chevron-right" style="color: var(--primary);"></i>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const scroller = document.getElementById("chat-scroller");
+        const userInput = document.getElementById("chat-user-input");
+        const sendBtn = document.getElementById("chat-send-btn");
+        const clearBtn = document.getElementById("clear-chat-btn");
+        const thinking = document.getElementById("thinking-indicator");
+        
+        // Scroll to bottom initial
+        scroller.scrollTop = scroller.scrollHeight;
+
+        function sendMessage() {
+            const message = userInput.value.trim();
+            if (!message) return;
+
+            // Append user bubble
+            appendBubble(message, true);
+            userInput.value = "";
+            scroller.scrollTop = scroller.scrollHeight;
+
+            // Display thinking
+            thinking.style.display = "block";
+            scroller.scrollTop = scroller.scrollHeight;
+
+            // Fire API post
+            fetch("/assistant/message", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: message })
+            })
+            .then(res => res.json())
+            .then(data => {
+                thinking.style.display = "none";
+                if (data.success) {
+                    appendBubble(data.bot_response, false);
+                    if (data.recommendation) {
+                        displayRecommendation(data.recommendation);
+                    }
+                } else {
+                    appendBubble("Apologies, assistant styling calibration failed. Please check connection.", false);
+                }
+                scroller.scrollTop = scroller.scrollHeight;
+            })
+            .catch(() => {
+                thinking.style.display = "none";
+                appendBubble("Network calibration error. Please try again.", false);
+                scroller.scrollTop = scroller.scrollHeight;
+            });
+        }
+
+        function appendBubble(text, isUser) {
+            const bubble = document.createElement("div");
+            bubble.className = isUser ? "chat-bubble chat-bubble-user" : "chat-bubble chat-bubble-bot";
+            // Simple markdown conversion for bolding
+            bubble.innerHTML = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            scroller.appendChild(bubble);
+        }
+
+        function displayRecommendation(rec) {
+            const guidanceBox = document.getElementById("advisor-guidance-box");
+            const recBox = document.getElementById("advisor-rec-box");
+            
+            const outfitText = document.getElementById("rec-outfit");
+            const colorsDiv = document.getElementById("rec-colors");
+            const tipsUl = document.getElementById("rec-tips");
+            const altText = document.getElementById("rec-alternative");
+            
+            // Swap display panels
+            if (guidanceBox) guidanceBox.style.display = "none";
+            recBox.style.display = "block";
+            
+            // Update contents
+            outfitText.innerText = rec.recommended_outfit;
+            altText.innerText = rec.alternative_look;
+            
+            // Render colors
+            colorsDiv.innerHTML = "";
+            rec.matching_colors.forEach(col => {
+                const hex = col.split(" ")[0];
+                const label = col.substring(hex.length).trim();
+                
+                const badge = document.createElement("span");
+                badge.className = "user-badge";
+                badge.style.fontSize = "0.72rem";
+                badge.style.background = hex.startsWith("#") ? hex + "15" : "rgba(0,0,0,0.05)";
+                badge.style.borderColor = hex.startsWith("#") ? hex + "40" : "var(--border-glass)";
+                badge.innerHTML = `<span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:${hex}; margin-right:4px;"></span> ${col}`;
+                colorsDiv.appendChild(badge);
+            });
+            
+            // Render tips
+            tipsUl.innerHTML = "";
+            rec.styling_tips.forEach(tip => {
+                const li = document.createElement("li");
+                li.innerText = tip;
+                tipsUl.appendChild(li);
+            });
+        }
+
+        // Send triggers
+        sendBtn.addEventListener("click", sendMessage);
+        userInput.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") sendMessage();
+        });
+
+        // Clear triggers
+        clearBtn.addEventListener("click", () => {
+            if (confirm("Reset current personal stylist chat session?")) {
+                fetch("/assistant/clear", { method: "POST" })
+                .then(() => window.location.reload());
+            }
+        });
+    });
+
+    function quickPrompt(text) {
+        const input = document.getElementById("chat-user-input");
+        if (input) {
+            input.value = text;
+            // Focus and trigger button send click
+            input.focus();
+            document.getElementById("chat-send-btn").click();
+        }
+    }
+</script>
+{% endblock %}

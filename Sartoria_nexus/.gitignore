@@ -1,0 +1,27 @@
+# Credentials & environment files
+.env
+
+# Local Databases
+*.db
+saturn_nexus.db
+
+# Python bytecode and caches
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Local static assets and uploads (keeping the directory structure intact, but ignoring runtime-created files)
+app/static/qr/qr_*.png
+app/static/uploads/logos/logo_*.png
+app/static/uploads/processed_*.png
+app/static/uploads/temp/*
+!app/static/uploads/logos/.gitkeep
+!app/static/uploads/temp/.gitkeep
+
+# IDE and OS files
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store

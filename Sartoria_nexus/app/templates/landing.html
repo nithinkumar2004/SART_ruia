@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Sartoria Nexus — Digitizing Fashion Identity{% endblock %}
+
+{% block content %}
+<div class="hero-section animate-fade">
+    <div class="hero-tagline">AI-Powered Garment Intelligence</div>
+    <h1 class="hero-title">From Fabric to Seamless Digital Experience</h1>
+    <p class="hero-desc">
+        Empower your boutique or luxury clothing brand. Generate highly customizable, branded QR code tags that instantly bridge your physical garments to interactive, future-ready virtual try-on experiences.
+    </p>
+    
+    <div class="hero-cta">
+        {% if current_user.is_authenticated %}
+            <a href="/dashboard" class="btn btn-primary btn-glow"><i class="fa-solid fa-gauge"></i> Enter Dashboard</a>
+        {% else %}
+            <a href="/signup" class="btn btn-primary btn-glow"><i class="fa-solid fa-rocket"></i> Launch Free MVP</a>
+            <a href="/login" class="btn btn-secondary"><i class="fa-solid fa-right-to-bracket"></i> Seller Sign-in</a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Futuristic Interactive Interactive Canvas Showcase Mockup -->
+<div class="hero-demo glass-card animate-fade" style="animation-delay: 0.2s; padding: 0; margin-bottom: 60px;">
+    <div class="demo-bar">
+        <div class="demo-dot demo-dot-pink"></div>
+        <div class="demo-dot demo-dot-purple"></div>
+        <div class="demo-dot demo-dot-indigo"></div>
+        <div style="font-family: var(--font-heading); font-size: 0.75rem; color: var(--text-secondary); margin-left: 10px;">
+            AI Pipeline Sandbox // Engine V1.02 Active
+        </div>
+    </div>
+    
+    <div class="demo-canvas" style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: center; padding: 40px;">
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div style="font-family: var(--font-heading); font-size: 1.4rem; color: #ffffff; font-weight: 600; display: flex; align-items: center; gap: 10px;">
+                <span style="background: var(--neon-pink); padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; letter-spacing: 0.05em;">STAGE 01</span>
+                Image Upload & Segment
+            </div>
+            <p style="font-size: 0.9rem; color: var(--text-secondary);">
+                Sellers upload standard commercial garment photos. The Sartoria Nexus core model separates background shadows and optimizes dimensions for cloud distribution.
+            </p>
+            <div style="display: flex; gap: 15px; margin-top: 10px;">
+                <div class="tech-tag"><span>Category:</span> Ethnic Wear</div>
+                <div class="tech-tag"><span class="color-dot" style="background: var(--neon-pink);"></span> Orchid Magenta</div>
+            </div>
+        </div>
+        
+        <div style="display: flex; align-items: center; justify-content: center; position: relative;">
+            <div class="glass-card" style="margin: 0; padding: 20px; width: 100%; max-width: 280px; text-align: center; border-color: var(--border-glass-focus); box-shadow: 0 0 30px rgba(90, 143, 216, 0.15);">
+                <div style="width: 100%; aspect-ratio: 1; background: rgba(0, 0, 0, 0.3); border-radius: 12px; border: 1px dashed rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; margin-bottom: 15px;">
+                    <i class="fa-solid fa-shirt" style="font-size: 4rem; color: var(--saturn-red); opacity: 0.85; filter: drop-shadow(0 0 15px var(--saturn-red));"></i>
+                </div>
+                <div style="font-family: var(--font-heading); font-size: 1rem; color: #ffffff; font-weight: 600; margin-bottom: 5px;">Branded QR Identity</div>
+                <div style="font-size: 0.75rem; color: var(--text-secondary); display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    <i class="fa-solid fa-shield-halved" style="color: var(--saturn-red);"></i> sartoria.nexus/qr/scan-v1
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Core Features Value Proposition Grid -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; margin-bottom: 60px;">
+    <div class="glass-card animate-fade" style="animation-delay: 0.3s; margin-bottom: 0;">
+        <i class="fa-solid fa-wand-magic-sparkles" style="font-size: 2.2rem; color: var(--neon-pink); margin-bottom: 20px;"></i>
+        <h3 style="font-size: 1.25rem; margin-bottom: 12px;">Background Removal AI</h3>
+        <p style="font-size: 0.9rem; color: var(--text-secondary);">
+            Instantly eliminate distracting studio backdrops. Our platform isolates the garment fabric, optimizing it for AR, AI try-ons, and luxury visual showcases.
+        </p>
+    </div>
+    
+    <div class="glass-card glass-card-purple animate-fade" style="animation-delay: 0.4s; margin-bottom: 0;">
+        <i class="fa-solid fa-qrcode" style="font-size: 2.2rem; color: var(--royal-purple); margin-bottom: 20px;"></i>
+        <h3 style="font-size: 1.25rem; margin-bottom: 12px;">Redirection scan tracking</h3>
+        <p style="font-size: 0.9rem; color: var(--text-secondary);">
+            Every scanned tag logs exact device analytics, locations, and timestamps. Connect your tags to a customizable Netlify virtual fashion hub.
+        </p>
+    </div>
+    
+    <div class="glass-card glass-card-indigo animate-fade" style="animation-delay: 0.5s; margin-bottom: 0;">
+        <i class="fa-solid fa-chart-line" style="font-size: 2.2rem; color: var(--tech-indigo); margin-bottom: 20px;"></i>
+        <h3 style="font-size: 1.25rem; margin-bottom: 12px;">Live Brand Analytics</h3>
+        <p style="font-size: 0.9rem; color: var(--text-secondary);">
+            Track which garments are gaining physical interaction in real-time. Gain geographical heatmaps, device profiles, and product conversion funnels.
+        </p>
+    </div>
+</div>
+{% endblock %}

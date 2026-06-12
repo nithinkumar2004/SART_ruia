@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Sarotoria — Smart Wardrobe Folders{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 30px; display: flex; flex-direction: column; gap: 6px;">
+    <div class="user-badge" style="width: max-content;">
+        <span class="indicator"></span> CLASSIFIED WARDROBE LAYOUT
+    </div>
+    <h2 style="font-size: 2.2rem; font-family: var(--font-heading); color: var(--text-main);">Smart Wardrobe</h2>
+    <p style="color: var(--text-sub); font-size: 0.95rem;">Organize cataloged garments, try-on predictions, and wishlist sets into structured occasion folders.</p>
+</div>
+
+<!-- Occasion Folder tabs navigation -->
+<div class="wardrobe-tabs">
+    <a href="/wardrobe?category=All" class="wardrobe-tab {% if active_cat == 'All' %}active{% endif %}">
+        <i class="fa-solid fa-list"></i> All Items ({{ counts.All }})
+    </a>
+    <a href="/wardrobe?category=Casual" class="wardrobe-tab {% if active_cat == 'Casual' %}active{% endif %}">
+        <i class="fa-solid fa-couch"></i> Casual ({{ counts.Casual }})
+    </a>
+    <a href="/wardrobe?category=Office" class="wardrobe-tab {% if active_cat == 'Office' %}active{% endif %}">
+        <i class="fa-solid fa-briefcase"></i> Office ({{ counts.Office }})
+    </a>
+    <a href="/wardrobe?category=Travel" class="wardrobe-tab {% if active_cat == 'Travel' %}active{% endif %}">
+        <i class="fa-solid fa-plane"></i> Travel ({{ counts.Travel }})
+    </a>
+    <a href="/wardrobe?category=Wedding" class="wardrobe-tab {% if active_cat == 'Wedding' %}active{% endif %}">
+        <i class="fa-solid fa-handshake"></i> Wedding ({{ counts.Wedding }})
+    </a>
+    <a href="/wardrobe?category=Party" class="wardrobe-tab {% if active_cat == 'Party' %}active{% endif %}">
+        <i class="fa-solid fa-champagne-glasses"></i> Party ({{ counts.Party }})
+    </a>
+</div>
+
+<!-- Smart Wardrobe catalog grid -->
+{% if items %}
+    <div class="garment-grid">
+        {% for item in items %}
+            {% if item.garments %}
+                <div class="garment-item" style="position: relative;">
+                    
+                    <!-- Remove from wardrobe button in corner -->
+                    <form action="{{ url_for('wardrobe.delete_item') }}" method="POST" style="position: absolute; top: 12px; right: 12px; z-index: 10;">
+                        <input type="hidden" name="wardrobe_id" value="{{ item.id }}">
+                        <button type="submit" style="background: rgba(255, 46, 190, 0.1); border: 1px solid rgba(255, 46, 190, 0.2); color: var(--secondary); width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: var(--transition);" aria-label="Remove item">
+                            <i class="fa-solid fa-trash-can" style="font-size: 0.85rem;"></i>
+                        </button>
+                    </form>
+
+                    <div class="garment-image-wrapper">
+                        <img src="{{ item.garments.image_url }}" alt="{{ item.garments.garment_name }}" class="garment-img">
+                    </div>
+                    
+                    <div class="garment-meta">
+                        <span class="garment-brand"><i class="fa-solid fa-tag"></i> {{ item.folder_category }}</span>
+                        <h4 class="garment-name">{{ item.garments.garment_name }}</h4>
+                        
+                        <div style="display: flex; gap: 8px; margin-top: 15px;">
+                            <a href="/garment/{{ item.garments.id }}" class="btn btn-secondary" style="flex: 1.2; padding: 8px 10px; font-size: 0.75rem;"><i class="fa-solid fa-circle-info"></i> Specs</a>
+                            <a href="/tryon?garment_id={{ item.garments.id }}" class="btn btn-primary btn-glow" style="flex: 1.8; padding: 8px 10px; font-size: 0.75rem;"><i class="fa-solid fa-shirt"></i> Try-On</a>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="glass-panel" style="text-align: center; padding: 60px 20px; border-style: dashed; border-color: var(--border-glass);">
+        <div style="background: rgba(0, 212, 255, 0.05); width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto;">
+            <i class="fa-solid fa-folder-open" style="font-size: 2.5rem; color: var(--primary);"></i>
+        </div>
+        <h3 style="font-family: var(--font-heading); color: var(--text-main); margin-bottom: 10px;">Occasion Folder is Empty</h3>
+        <p style="font-size: 0.9rem; color: var(--text-sub); max-width: 420px; margin: 0 auto 20px auto;">You haven't cataloged any garments into the <strong>{{ active_cat }}</strong> wardrobe folder yet. Scan retail QR codes to start building your look combinations!</p>
+        <a href="/dashboard" class="btn btn-primary btn-glow"><i class="fa-solid fa-shop"></i> Browse Partner Catalog</a>
+    </div>
+{% endif %}
+
+{% endblock %}

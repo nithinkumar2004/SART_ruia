@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}Sarotoria — Calibrate Your Style Profile{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: center; align-items: center; min-height: 80vh; padding: 40px 0;">
+    <div class="glass-panel glow-primary" style="width: 100%; max-width: 600px; padding: 40px; border-radius: 28px;">
+        
+        <!-- Multi-step Indicator Dot Row -->
+        <div class="onboarding-steps">
+            <div class="step-dot active">1</div>
+            <div class="step-dot">2</div>
+            <div class="step-dot">3</div>
+        </div>
+
+        <form action="{{ url_for('auth.onboarding') }}" method="POST" id="onboarding-form">
+            
+            <!-- STEP 1: Personal Details Card -->
+            <div class="onboarding-step-card" style="display: block;">
+                <div style="text-align: center; margin-bottom: 25px; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                    <div class="user-badge" style="width: max-content;">
+                        <span class="indicator"></span> STEP 1: INITIAL CALIBRATION
+                    </div>
+                    <h2 style="font-family: var(--font-heading); color: var(--text-main);">Calibration Setup</h2>
+                    <p style="font-size: 0.88rem; color: var(--text-sub);">Let's initialize your fashion identity credentials</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="full_name" class="form-label"><i class="fa-solid fa-signature"></i> Full Name</label>
+                    <input type="text" id="full_name" name="full_name" class="form-input" placeholder="e.g. Satya Prakash" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="gender" class="form-label"><i class="fa-solid fa-venus-mars"></i> Gender Profile</label>
+                    <select id="gender" name="gender" class="form-input form-select">
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Unisex">Unisex</option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 30px;">
+                    <label for="age" class="form-label"><i class="fa-solid fa-cake-candles"></i> Age</label>
+                    <input type="number" id="age" name="age" class="form-input" min="1" max="120" placeholder="e.g. 26" required>
+                </div>
+
+                <button type="button" class="btn btn-primary btn-glow btn-next-step" style="width: 100%; padding: 14px;"><i class="fa-solid fa-circle-arrow-right"></i> Next: Body Metrics</button>
+            </div>
+
+            <!-- STEP 2: Body Measurements Card -->
+            <div class="onboarding-step-card" style="display: none;">
+                <div style="text-align: center; margin-bottom: 25px; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                    <div class="user-badge" style="width: max-content; background: rgba(255, 46, 190, 0.05); border-color: rgba(255, 46, 190, 0.2);">
+                        <i class="fa-solid fa-ruler-combined" style="color: var(--secondary);"></i> STEP 2: BODY PROFILE CALIBRATION
+                    </div>
+                    <h2 style="font-family: var(--font-heading); color: var(--text-main);">Body Parameters</h2>
+                    <p style="font-size: 0.88rem; color: var(--text-sub);">These metrics power AI Try-On fits and size selections</p>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label for="height" class="form-label"><i class="fa-solid fa-arrows-up-down"></i> Height (cm)</label>
+                        <input type="number" id="height" name="height" class="form-input" min="50" max="250" value="175" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="weight" class="form-label"><i class="fa-solid fa-weight-scale"></i> Weight (kg)</label>
+                        <input type="number" id="weight" name="weight" class="form-input" min="20" max="300" value="70" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="body_type" class="form-label"><i class="fa-solid fa-person"></i> Body Silhouette Type</label>
+                    <select id="body_type" name="body_type" class="form-input form-select">
+                        <option value="Average">Average / Rectangular</option>
+                        <option value="Athletic">Athletic / Inverted Triangle</option>
+                        <option value="Hourglass">Hourglass</option>
+                        <option value="Pear">Pear / Triangle Shape</option>
+                        <option value="Round">Round / Oval</option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 30px;">
+                    <label for="skin_tone" class="form-label"><i class="fa-solid fa-palette"></i> Skin Complexion Tone</label>
+                    <select id="skin_tone" name="skin_tone" class="form-input form-select">
+                        <option value="Fair Light">Fair / Cool Light</option>
+                        <option value="Warm Sand">Medium / Warm Sand</option>
+                        <option value="Olive Tan">Olive / Sun-Kissed Tan</option>
+                        <option value="Rich Dark">Rich / Deep Cocoa Dark</option>
+                    </select>
+                </div>
+
+                <div style="display: flex; gap: 15px;">
+                    <button type="button" class="btn btn-secondary btn-prev-step" style="flex: 1;"><i class="fa-solid fa-circle-arrow-left"></i> Back</button>
+                    <button type="button" class="btn btn-primary btn-glow btn-next-step" style="flex: 2;"><i class="fa-solid fa-circle-arrow-right"></i> Next: Stylist Preferences</button>
+                </div>
+            </div>
+
+            <!-- STEP 3: Styling Preferences Card -->
+            <div class="onboarding-step-card" style="display: none;">
+                <div style="text-align: center; margin-bottom: 25px; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                    <div class="user-badge" style="width: max-content;">
+                        <span class="indicator"></span> STEP 3: STYLE SYNCING
+                    </div>
+                    <h2 style="font-family: var(--font-heading); color: var(--text-main);">Fashion Preferences</h2>
+                    <p style="font-size: 0.88rem; color: var(--text-sub);">Select style themes for custom tailoring recommendations</p>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 30px;">
+                    <label class="form-label"><i class="fa-solid fa-heart"></i> Preferred Style Profiles (Select all)</label>
+                    <div class="preferences-grid">
+                        <input type="checkbox" id="pref_casual" name="preferences" value="Casual" class="pref-checkbox" checked>
+                        <label for="pref_casual" class="pref-label">Casual wear</label>
+
+                        <input type="checkbox" id="pref_office" name="preferences" value="Office" class="pref-checkbox">
+                        <label for="pref_office" class="pref-label">Formal Office</label>
+
+                        <input type="checkbox" id="pref_streetwear" name="preferences" value="Streetwear" class="pref-checkbox">
+                        <label for="pref_streetwear" class="pref-label">Streetwear</label>
+
+                        <input type="checkbox" id="pref_ethnic" name="preferences" value="Ethnic" class="pref-checkbox">
+                        <label for="pref_ethnic" class="pref-label">Ethnic & Fest</label>
+
+                        <input type="checkbox" id="pref_vintage" name="preferences" value="Vintage" class="pref-checkbox">
+                        <label for="pref_vintage" class="pref-label">Vintage Retro</label>
+
+                        <input type="checkbox" id="pref_minimalist" name="preferences" value="Minimalist" class="pref-checkbox" checked>
+                        <label for="pref_minimalist" class="pref-label">Minimalist</label>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 15px;">
+                    <button type="button" class="btn btn-secondary btn-prev-step" style="flex: 1;"><i class="fa-solid fa-circle-arrow-left"></i> Back</button>
+                    <button type="submit" class="btn btn-primary btn-glow" style="flex: 2;"><i class="fa-solid fa-square-check"></i> Complete Calibration</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+{% endblock %}

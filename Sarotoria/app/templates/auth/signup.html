@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Sarotoria — Account Registration{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: center; align-items: center; min-height: 70vh; padding: 40px 0;">
+    <div class="glass-panel glow-secondary" style="width: 100%; max-width: 480px; padding: 40px; border-radius: 28px;">
+        <div style="text-align: center; margin-bottom: 30px; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+            <div class="user-badge" style="width: max-content; background: rgba(255, 46, 190, 0.05); border-color: rgba(255, 46, 190, 0.2);">
+                <i class="fa-solid fa-rocket" style="color: var(--secondary);"></i> REGISTER BRAND ACCESS
+            </div>
+            <h2 style="font-size: 1.8rem; font-family: var(--font-heading); color: var(--text-main);">Join the Universe</h2>
+            <p style="font-size: 0.88rem; color: var(--text-sub);">Create your digital fashion identity to catalog styling looks</p>
+        </div>
+
+        <form action="{{ url_for('auth.signup') }}" method="POST" style="display: flex; flex-direction: column; gap: 5px;">
+            <div class="form-group">
+                <label for="email" class="form-label"><i class="fa-solid fa-envelope"></i> Email Address</label>
+                <input type="email" id="email" name="email" class="form-input" placeholder="e.g. yourname@gmail.com" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password" class="form-label"><i class="fa-solid fa-lock"></i> Password</label>
+                <input type="password" id="password" name="password" class="form-input" placeholder="Choose secure password" required>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 25px;">
+                <label for="confirm_password" class="form-label"><i class="fa-solid fa-shield-halved"></i> Confirm Password</label>
+                <input type="password" id="confirm_password" name="confirm_password" class="form-input" placeholder="Re-enter secure password" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-glow" style="width: 100%; padding: 14px; font-size: 1rem;"><i class="fa-solid fa-user-plus"></i> Initialize Account</button>
+        </form>
+
+        <div style="text-align: center; margin-top: 25px; border-top: 1px solid var(--border-glass); padding-top: 20px;">
+            <p style="font-size: 0.88rem; color: var(--text-sub);">Already have a portal? <a href="{{ url_for('auth.login') }}" style="font-weight: 600; color: var(--secondary);">Login here <i class="fa-solid fa-arrow-right-long" style="font-size: 0.75rem;"></i></a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

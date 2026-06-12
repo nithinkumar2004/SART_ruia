@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}Sarotoria — Recalibrate Body Profile{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 30px; display: flex; flex-direction: column; gap: 6px;">
+    <a href="/dashboard" class="btn btn-secondary" style="padding: 8px 16px; font-size: 0.85rem; width: max-content; margin-bottom: 10px;"><i class="fa-solid fa-arrow-left-long"></i> Back to Dashboard</a>
+    <h2 style="font-size: 2.2rem; font-family: var(--font-heading); color: var(--text-main);">Profile Settings</h2>
+    <p style="color: var(--text-sub); font-size: 0.95rem;">Recalibrate your body measurements parameters, skin tones, and style categories preferences.</p>
+</div>
+
+<div class="layout-split">
+    
+    <!-- LEFT PANEL: Active Profile form editor -->
+    <div class="glass-panel glow-primary" style="padding: 40px; border-radius: 28px;">
+        <div style="text-align: center; margin-bottom: 25px;">
+            <h3 style="font-family: var(--font-heading); color: var(--text-main); font-size: 1.4rem;">Calibrate Parameters</h3>
+            <p style="font-size: 0.85rem; color: var(--text-sub);">Maintain precise body metrics to ensure true sizing predictions.</p>
+        </div>
+
+        <form action="{{ url_for('profile.update_profile') }}" method="POST" style="display: flex; flex-direction: column; gap: 5px;">
+            
+            <div class="form-group">
+                <label for="full_name" class="form-label"><i class="fa-solid fa-signature"></i> Full Name</label>
+                <input type="text" id="full_name" name="full_name" class="form-input" value="{{ profile.full_name }}" required>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="form-group">
+                    <label for="gender" class="form-label"><i class="fa-solid fa-venus-mars"></i> Gender</label>
+                    <select id="gender" name="gender" class="form-input form-select">
+                        <option value="Male" {% if profile.gender == 'Male' %}selected{% endif %}>Male</option>
+                        <option value="Female" {% if profile.gender == 'Female' %}selected{% endif %}>Female</option>
+                        <option value="Unisex" {% if profile.gender == 'Unisex' %}selected{% endif %}>Unisex</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="age" class="form-label"><i class="fa-solid fa-cake-candles"></i> Age</label>
+                    <input type="number" id="age" name="age" class="form-input" min="1" max="120" value="{{ profile.age }}" required>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="form-group">
+                    <label for="height" class="form-label"><i class="fa-solid fa-arrows-up-down"></i> Height (cm)</label>
+                    <input type="number" id="height" name="height" class="form-input" min="50" max="250" value="{{ profile.height }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="weight" class="form-label"><i class="fa-solid fa-weight-scale"></i> Weight (kg)</label>
+                    <input type="number" id="weight" name="weight" class="form-input" min="20" max="300" value="{{ profile.weight }}" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="body_type" class="form-label"><i class="fa-solid fa-person"></i> Body Type</label>
+                <select id="body_type" name="body_type" class="form-input form-select">
+                    <option value="Average" {% if profile.body_type == 'Average' %}selected{% endif %}>Average / Rectangular</option>
+                    <option value="Athletic" {% if profile.body_type == 'Athletic' %}selected{% endif %}>Athletic / Inverted Triangle</option>
+                    <option value="Hourglass" {% if profile.body_type == 'Hourglass' %}selected{% endif %}>Hourglass</option>
+                    <option value="Pear" {% if profile.body_type == 'Pear' %}selected{% endif %}>Pear / Triangle Shape</option>
+                    <option value="Round" {% if profile.body_type == 'Round' %}selected{% endif %}>Round / Oval</option>
+                </select>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 25px;">
+                <label for="skin_tone" class="form-label"><i class="fa-solid fa-palette"></i> Skin Complexion Tone</label>
+                <select id="skin_tone" name="skin_tone" class="form-input form-select">
+                    <option value="Fair Light" {% if profile.skin_tone == 'Fair Light' %}selected{% endif %}>Fair / Cool Light</option>
+                    <option value="Warm Sand" {% if profile.skin_tone == 'Warm Sand' %}selected{% endif %}>Medium / Warm Sand</option>
+                    <option value="Olive Tan" {% if profile.skin_tone == 'Olive Tan' %}selected{% endif %}>Olive / Sun-Kissed Tan</option>
+                    <option value="Rich Dark" {% if profile.skin_tone == 'Rich Dark' %}selected{% endif %}>Rich / Deep Cocoa Dark</option>
+                </select>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 30px;">
+                <label class="form-label"><i class="fa-solid fa-heart"></i> Style Preferences</label>
+                <div class="preferences-grid">
+                    <input type="checkbox" id="pref_casual" name="preferences" value="Casual" class="pref-checkbox" {% if 'Casual' in profile.fashion_preferences %}checked{% endif %}>
+                    <label for="pref_casual" class="pref-label">Casual wear</label>
+
+                    <input type="checkbox" id="pref_office" name="preferences" value="Office" class="pref-checkbox" {% if 'Office' in profile.fashion_preferences %}checked{% endif %}>
+                    <label for="pref_office" class="pref-label">Formal Office</label>
+
+                    <input type="checkbox" id="pref_streetwear" name="preferences" value="Streetwear" class="pref-checkbox" {% if 'Streetwear' in profile.fashion_preferences %}checked{% endif %}>
+                    <label for="pref_streetwear" class="pref-label">Streetwear</label>
+
+                    <input type="checkbox" id="pref_ethnic" name="preferences" value="Ethnic" class="pref-checkbox" {% if 'Ethnic' in profile.fashion_preferences %}checked{% endif %}>
+                    <label for="pref_ethnic" class="pref-label">Ethnic & Fest</label>
+
+                    <input type="checkbox" id="pref_vintage" name="preferences" value="Vintage" class="pref-checkbox" {% if 'Vintage' in profile.fashion_preferences %}checked{% endif %}>
+                    <label for="pref_vintage" class="pref-label">Vintage Retro</label>
+
+                    <input type="checkbox" id="pref_minimalist" name="preferences" value="Minimalist" class="pref-checkbox" {% if 'Minimalist' in profile.fashion_preferences %}checked{% endif %}>
+                    <label for="pref_minimalist" class="pref-label">Minimalist</label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-glow" style="width: 100%; padding: 14px;"><i class="fa-solid fa-square-check"></i> Save Calibration Changes</button>
+        </form>
+    </div>
+
+    <!-- RIGHT PANEL: Display body analysis diagnostics summary -->
+    <div style="display: flex; flex-direction: column; gap: 25px;">
+        <div class="glass-panel" style="border-color: var(--accent);">
+            <h3 style="font-family: var(--font-heading); color: var(--text-main); font-size: 1.25rem; margin-bottom: 12px;"><i class="fa-solid fa-stethoscope" style="color: var(--accent); margin-right: 6px;"></i> Body Metrics Report</h3>
+            
+            <p style="font-size: 0.88rem; color: var(--text-sub); line-height: 1.5; margin-bottom: 20px;">Based on your current height and weight, our sizing analyzer maps body parameters dynamically:</p>
+            
+            <!-- Dynamic measurements report grid -->
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <div class="feed-item" style="padding: 12px;">
+                    <div class="feed-details">
+                        <span class="feed-item-title" style="font-size: 0.85rem; font-weight: 500;">Body Mass Index (BMI)</span>
+                        <span class="feed-meta" style="font-size: 0.72rem;">Calculated ratio from height & weight</span>
+                    </div>
+                    <span class="feed-badge feed-badge-mobile" style="font-size: 0.85rem;">Calibrated</span>
+                </div>
+                <div class="feed-item" style="padding: 12px;">
+                    <div class="feed-details">
+                        <span class="feed-item-title" style="font-size: 0.85rem; font-weight: 500;">Fitting Silhouette</span>
+                        <span class="feed-meta" style="font-size: 0.72rem;">Torso width matching bounds</span>
+                    </div>
+                    <span class="feed-badge feed-badge-mobile" style="font-size: 0.85rem;">{{ profile.body_type }}</span>
+                </div>
+                <div class="feed-item" style="padding: 12px;">
+                    <div class="feed-details">
+                        <span class="feed-item-title" style="font-size: 0.85rem; font-weight: 500;">Color Recommendations</span>
+                        <span class="feed-meta" style="font-size: 0.72rem;">Suited color schemes based on skin tone</span>
+                    </div>
+                    <span class="feed-badge feed-badge-mobile" style="font-size: 0.85rem;">High Match</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}Sartoria Nexus — Seller Sign-In{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: center; padding: 40px 0;">
+    <div class="glass-card animate-fade" style="width: 100%; max-width: 460px; margin-bottom: 0;">
+        
+        <div style="text-align: center; margin-bottom: 25px;">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Sartoria Nexus Logo" style="height: 70px; width: auto; margin-bottom: 15px; border: 1px solid rgba(29, 56, 100, 0.08); border-radius: 10px; box-shadow: 0 8px 20px rgba(29, 56, 100, 0.06);">
+            <h2 style="font-size: 1.8rem; margin-bottom: 6px;">Portal Sign-In</h2>
+            <p style="font-size: 0.85rem; color: var(--text-secondary);">Manage your fashion digital identifiers</p>
+        </div>
+        
+        <!-- Auth Method Tabs -->
+        <div style="display: flex; background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: 10px; padding: 4px; margin-bottom: 25px;">
+            <button type="button" id="tab-email" class="btn" style="flex: 1; padding: 8px; font-size: 0.85rem; background: var(--neon-pink); color: white; border-radius: 8px;">
+                <i class="fa-solid fa-envelope"></i> Email
+            </button>
+            <button type="button" id="tab-phone" class="btn" style="flex: 1; padding: 8px; font-size: 0.85rem; background: transparent; color: var(--text-secondary); border-radius: 8px;">
+                <i class="fa-solid fa-phone"></i> Phone OTP
+            </button>
+        </div>
+        
+        <!-- Email Sign In Form -->
+        <form id="form-email" action="/login" method="POST" class="animate-fade">
+            <input type="hidden" name="auth_type" value="email">
+            
+            <div class="form-group">
+                <label for="email" class="form-label">Contact Email Address</label>
+                <input type="email" id="email" name="email" class="form-input" placeholder="designer@brand.com" required>
+            </div>
+            
+            <div class="form-group" style="margin-bottom: 25px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <label for="password" class="form-label">Account Password</label>
+                </div>
+                <input type="password" id="password" name="password" class="form-input" placeholder="••••••••" required>
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-glow" style="width: 100%; padding: 14px;">
+                <i class="fa-solid fa-right-to-bracket"></i> Authenticate Credentials
+            </button>
+        </form>
+        
+        <!-- Phone Sign In Form -->
+        <form id="form-phone" action="/login" method="POST" style="display: none;" class="animate-fade">
+            <input type="hidden" name="auth_type" value="phone">
+            
+            <div class="form-group" style="margin-bottom: 25px;">
+                <label for="phone" class="form-label">Mobile Number</label>
+                <input type="tel" id="phone" name="phone" class="form-input" placeholder="+1 (555) 019-2834">
+                <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">
+                    Enter your international number to receive a simulated OTP code.
+                </span>
+            </div>
+            
+            <button type="submit" class="btn btn-accent btn-glow" style="width: 100%; padding: 14px;">
+                <i class="fa-solid fa-paper-plane"></i> Request OTP Authentication
+            </button>
+        </form>
+        
+        <div style="text-align: center; margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem; color: var(--text-secondary);">
+            New seller to Sartoria Nexus? <a href="/signup">Create brand identity</a>
+        </div>
+        
+    </div>
+</div>
+
+<script>
+    // Tab switching scripting
+    const tabEmail = document.getElementById('tab-email');
+    const tabPhone = document.getElementById('tab-phone');
+    const formEmail = document.getElementById('form-email');
+    const formPhone = document.getElementById('form-phone');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const phoneInput = document.getElementById('phone');
+
+    tabEmail.addEventListener('click', () => {
+        tabEmail.style.background = 'var(--neon-pink)';
+        tabEmail.style.color = 'white';
+        tabPhone.style.background = 'transparent';
+        tabPhone.style.color = 'var(--text-secondary)';
+        formEmail.style.display = 'block';
+        formPhone.style.display = 'none';
+        
+        // Form validations toggles
+        emailInput.required = true;
+        passwordInput.required = true;
+        phoneInput.required = false;
+    });
+
+    tabPhone.addEventListener('click', () => {
+        tabPhone.style.background = 'var(--neon-pink)';
+        tabPhone.style.color = 'white';
+        tabEmail.style.background = 'transparent';
+        tabEmail.style.color = 'var(--text-secondary)';
+        formEmail.style.display = 'none';
+        formPhone.style.display = 'block';
+        
+        // Form validations toggles
+        emailInput.required = false;
+        passwordInput.required = false;
+        phoneInput.required = true;
+    });
+</script>
+{% endblock %}

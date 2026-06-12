@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}Sartoria Nexus — Manage {{ garment.garment_name }}{% endblock %}
+
+{% block content %}
+<div class="animate-fade">
+    <!-- Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <div>
+            <h1 style="font-size: 2.2rem; margin-bottom: 4px;">Garment Identity Hub</h1>
+            <p style="font-size: 0.85rem; color: var(--text-secondary);">Review, customize, and distribute your item's virtual portal coordinates</p>
+        </div>
+        <a href="/garments" class="btn btn-secondary">
+            <i class="fa-solid fa-arrow-left"></i> Back to Catalog
+        </a>
+    </div>
+
+    <!-- Main Layout Split -->
+    <div class="detail-layout">
+        
+        <!-- Left: Isolated Silhouette Preview -->
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div class="detail-img-box">
+                <!-- Displays the alpha transparent optimized PNG -->
+                <img src="{{ url_for('static', filename=garment.image_url) }}" class="detail-img" alt="{{ garment.garment_name }}">
+                
+                <span style="position: absolute; top: 15px; left: 15px; background: rgba(0,0,0,0.6); padding: 5px 12px; border-radius: 6px; font-size: 0.75rem; border: 1px solid var(--border-glass); color: #00ff66; font-family: var(--font-heading);">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> AI Background Isolated
+                </span>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div style="display: flex; gap: 15px;">
+                <form action="/garment/delete/{{ garment.id }}" method="POST" style="flex: 1;" onsubmit="return confirm('Are you absolutely sure you want to delete this garment? This will permanently wipe its digital QR coordinates and all associated scan history logs.');">
+                    <button type="submit" class="btn btn-danger" style="width: 100%;">
+                        <i class="fa-solid fa-trash-can"></i> Decommission Node
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Right: Specs Table, QR Code & Scans -->
+        <div class="detail-info">
+            
+            <div>
+                <span class="garment-card-category" style="font-size: 0.85rem; font-weight: bold;">{{ garment.category }}</span>
+                <h2 style="font-size: 2rem; margin-top: 5px; margin-bottom: 15px;">{{ garment.garment_name }}</h2>
+                
+                <!-- AI Specs Badges Grid -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div class="tech-tag">
+                        <span>Dominant Hue:</span> 
+                        <span class="color-dot" style="background: {{ garment.pattern or '#ffffff' }};"></span>
+                        {{ garment.color }}
+                    </div>
+                    <div class="tech-tag"><span>Sleeve Cut:</span> {{ garment.sleeve_type or 'N/A' }}</div>
+                    <div class="tech-tag"><span>Styling:</span> {{ garment.style or 'Casual' }}</div>
+                    <div class="tech-tag"><span>Structure:</span> {{ garment.pattern or 'Solid' }}</div>
+                </div>
+            </div>
+            
+            <!-- Branded QR Printable Card Widget -->
+            <div class="qr-box-detailed">
+                <div class="qr-image-frame">
+                    <!-- Serves the generated branded QR code -->
+                    <img src="{{ url_for('static', filename=garment.qr_image) }}" alt="Garment QR Matrix">
+                </div>
+                
+                <div class="qr-actions">
+                    <h4 style="font-size: 1.05rem; margin-bottom: 4px;">Smart Tag Identity</h4>
+                    <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.4;">
+                        Print this high-res QR code on your garment hangtags. When scanned by a customer, it tracks live coordinates and launches the virtual hub.
+                    </p>
+                    
+                    <div style="display: flex; gap: 10px; width: 100%;">
+                        <a href="/qr/download-qr/{{ garment.id }}" class="btn btn-primary btn-glow" style="flex: 1.2; padding: 8px; font-size: 0.8rem;">
+                            <i class="fa-solid fa-download"></i> Download PNG
+                        </a>
+                        <a href="/qr/generate-qr/{{ garment.id }}" class="btn btn-secondary" style="flex: 0.8; padding: 8px; font-size: 0.8rem;" title="Force regenerate QR matrix">
+                            <i class="fa-solid fa-rotate"></i> Sync
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Garment Specific Scan History -->
+            <div class="glass-card" style="margin-bottom: 0; padding: 20px;">
+                <h4 style="font-size: 1.05rem; margin-bottom: 15px;"><i class="fa-solid fa-list-check" style="color: var(--neon-pink); margin-right: 6px;"></i> Node Activity Stream</h4>
+                
+                {% if scan_history %}
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        {% for scan in scan_history %}
+                            <div class="feed-item" style="padding: 10px 14px;">
+                                <div class="feed-details">
+                                    <span style="font-size: 0.85rem; font-weight: 500;"><i class="fa-solid fa-location-dot" style="color: var(--neon-pink);"></i> {{ scan.country }}</span>
+                                    <span style="font-size: 0.7rem; color: var(--text-muted);">IP: {{ scan.ip_address }} // {{ scan.scanned_at }}</span>
+                                </div>
+                                <span class="feed-badge feed-badge-{{ scan.device_type.lower() }}" style="font-size: 0.7rem; padding: 2px 6px;">
+                                    {{ scan.device_type }}
+                                </span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div style="text-align: center; padding: 20px 0; font-size: 0.8rem; color: var(--text-muted);">
+                        <i class="fa-solid fa-qrcode" style="font-size: 1.5rem; margin-bottom: 8px; display: block;"></i>
+                        No scans registered yet. Print the tag to start tracking!
+                    </div>
+                {% endif %}
+            </div>
+            
+        </div>
+        
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sartoria Nexus — Digital Fashion & AI Try-On{% endblock %}</title>
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Main Premium Style -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <!-- Chart.js CDN (required for dashboards) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    {% block head %}{% endblock %}
+</head>
+<body>
+
+    <!-- Dynamic Glassmorphic Navigation -->
+    <nav class="navbar">
+        <a href="/" class="nav-brand">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Sartoria Nexus Logo" style="height: 40px; width: auto; border: 1px solid rgba(29, 56, 100, 0.08); border-radius: 6px; -webkit-text-fill-color: initial; margin-right: 2px; box-shadow: 0 4px 10px rgba(29, 56, 100, 0.05);">
+            SARTORIA <span style="color: var(--text-primary);">NEXUS</span>
+        </a>
+        
+        <ul class="nav-menu">
+            {% if current_user.is_authenticated %}
+                {% if current_user.business_name %}
+                    <li><a href="/dashboard" class="nav-link {% if request.path == '/dashboard' %}active{% endif %}"><i class="fa-solid fa-chart-line"></i> Dashboard</a></li>
+                    <li><a href="/garments" class="nav-link {% if request.path == '/garments' %}active{% endif %}"><i class="fa-solid fa-shirt"></i> Catalog</a></li>
+                    <li><a href="/upload-garment" class="nav-link {% if request.path == '/upload-garment' %}active{% endif %}"><i class="fa-solid fa-cloud-arrow-up"></i> Upload</a></li>
+                    <li><a href="/analytics" class="nav-link {% if request.path == '/analytics' %}active{% endif %}"><i class="fa-solid fa-magnifying-glass-chart"></i> Analytics</a></li>
+                {% else %}
+                    <li><a href="/register-business" class="nav-link active"><i class="fa-solid fa-id-card"></i> Onboarding</a></li>
+                {% endif %}
+            {% else %}
+                <li><a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}"><i class="fa-solid fa-house"></i> Home</a></li>
+                <li><a href="/login" class="nav-link {% if request.path == '/login' %}active{% endif %}"><i class="fa-solid fa-right-to-bracket"></i> Login</a></li>
+            {% endif %}
+        </ul>
+
+        <div class="nav-user">
+            {% if current_user.is_authenticated %}
+                <div class="user-badge">
+                    <div class="indicator"></div>
+                    {% if current_user.business_name %}
+                        {{ current_user.business_name }}
+                    {% else %}
+                        Pending Node
+                    {% endif %}
+                </div>
+                <a href="/logout" class="btn btn-secondary btn-glow" style="padding: 8px 16px; font-size: 0.85rem;"><i class="fa-solid fa-power-off"></i> Logout</a>
+            {% else %}
+                <a href="/signup" class="btn btn-primary btn-glow"><i class="fa-solid fa-user-plus"></i> Join Platform</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- Flash Message Banner Notifications -->
+    <div class="alert-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} animate-fade">
+                        <div>
+                            {% if category == 'success' %}
+                                <i class="fa-solid fa-circle-check" style="margin-right: 8px;"></i>
+                            {% elif category == 'danger' %}
+                                <i class="fa-solid fa-triangle-exclamation" style="margin-right: 8px;"></i>
+                            {% elif category == 'warning' %}
+                                <i class="fa-solid fa-circle-exclamation" style="margin-right: 8px;"></i>
+                            {% else %}
+                                <i class="fa-solid fa-circle-info" style="margin-right: 8px;"></i>
+                            {% endif %}
+                            {{ message }}
+                        </div>
+                        <span class="alert-close">&times;</span>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Main Content Injection Grid -->
+    <main class="glass-container">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Main App Script -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
